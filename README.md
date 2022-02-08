@@ -1,3 +1,3 @@
-<img src="logo.jfif" alt="Parking Eye" width="50"/>
+![Parking Eye](logo.jfif | width=100)
 # ParkingEye
 Search engine for parking spaces according to outdoor cameras 
