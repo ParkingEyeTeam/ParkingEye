@@ -1,4 +1,4 @@
-![Parking Eye]<img src="logo.jfif" width="100">
+<img src="logo.jfif" width="100">
 
 # ParkingEye
 
