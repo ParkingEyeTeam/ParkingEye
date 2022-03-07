@@ -1,9 +1,9 @@
-import telebot;
+import telebot
 import json
 import pprint
 import numpy as np
 
-bot = telebot.TeleBot('5093740119:AAGiXZ4W5UIxWCA5_PociTPfh7FU7gepCUc');
+bot = telebot.TeleBot('5093740119:AAGiXZ4W5UIxWCA5_PociTPfh7FU7gepCUc')
 
 
 @bot.message_handler(content_types=['text'])
