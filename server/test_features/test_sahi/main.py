@@ -70,20 +70,21 @@ all_time = 0
 # cv
 cap = cv2.VideoCapture('13.mp4')
 
-# while cap.isOpened():
-#     ret, frame = cap.read()
-#     if not ret:
-#         break
-#         # print(1)
-#     result = get_prediction(Image.fromarray(frame), detection_model, image_size=1920)
-#     for res in result.object_prediction_list:
-#         bbox = res.bbox.to_voc_bbox()
-#         # print(bbox)
-#         name = res.category.name
-#         cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
-#         cv2.putText(frame, name, (bbox[0] + 20, bbox[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-#     cv2.imshow('test', frame)
-#     cv2.waitKey(1)
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+        # print(1)
+    result = get_prediction(Image.fromarray(frame), detection_model, image_size=1920)
+    for res in result.object_prediction_list:
+        bbox = res.bbox.to_voc_bbox()
+        # res.score
+        # print(bbox)
+        name = res.category.name
+        cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
+        cv2.putText(frame, name, (bbox[0] + 20, bbox[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    cv2.imshow('test', frame)
+    cv2.waitKey(1)
 for i in range(10):
     t = time.time()
     # if i >= 2:
@@ -122,4 +123,4 @@ print(all_time / 8)
 #
 #     cv2.rectangle(img, (x0, y0), (x1, y1), (0, 255, 0), 2)
 # cv2.imwrite('yolo.png', img)
-result.export_visuals(export_dir="demo_data/not_slised/")
+result.export_visuals(export_dir="demo_data/not_slised_1/")
