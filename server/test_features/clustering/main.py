@@ -112,6 +112,8 @@ def find_clusters(cur_heatmap, image, thresh_por=15):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     print(points)
     # print(time.time() - t)
+
+
 # _points_3 = [(204, 136), (483, 158), (472, 145), (405, 157), (308, 219), (386, 248), (141, 279), (476, 279), (580, 314),
 #            (384, 394), (595, 443)]
 
@@ -125,7 +127,7 @@ def find_clusters(cur_heatmap, image, thresh_por=15):
 #         # cv2.putText(image, "center", (cX - 20, cY - 20),
 #         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-photo_name = os.listdir(img_src_dir)[random.randint(0, len(os.listdir(img_src_dir))-1)]
+photo_name = os.listdir(img_src_dir)[random.randint(0, len(os.listdir(img_src_dir)) - 1)]
 image = cv2.imread(img_src_dir + photo_name)
 image = cv2.resize(image, (640, 480))
 find_clusters(heatmap, image)
