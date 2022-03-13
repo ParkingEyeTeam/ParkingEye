@@ -1,0 +1,19 @@
+name: parking_eye_no_versions
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+  - nvidia
+dependencies:
+  - python=3.9
+  - cudatoolkit=11.3
+  - pytorch::pytorch
+  - pytorch::torchvision
+  - pip
+  - pip:
+      - opencv-python
+      - sahi
+      - yolov5
+      - fastapi
+      - uvicorn[standart]
+      - pyTelegramBotAPI

@@ -7,4 +7,11 @@
 `conda env create -f environment.yml`
 
 
-Если нужно доставить новые пакеты из pip, заносите их в **requirements.txt**.
+Если нужно доставить новые пакеты из pip, заносите их в **environment.yml** по аналогии.
+
+Чтобы обновить окружение:
+
+`conda env update -f environment.yml`
+
+`conda env update -f environment.yml --prune` - также удалит зависимости, которых больше нет в конфиге.
+
