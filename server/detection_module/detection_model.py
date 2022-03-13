@@ -30,7 +30,7 @@ class DetectionModel:
 
     def predict(self, image: np.ndarray):
         image = Image.fromarray(image)
-        result = get_prediction(image, self.model, image_size=1920)
+        result = get_prediction(image, self.model, image_size=self.inference_size)
         return result
 
     @staticmethod
