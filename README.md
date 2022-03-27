@@ -1,4 +1,4 @@
 ![](Logo.png)
 # Search engine for parking spaces according to outdoor cameras 
 
-Запуск сервера: `uvicorn server.main:app --reload`
+Запуск сервера из корневой папки: `uvicorn server.main:app --reload`
