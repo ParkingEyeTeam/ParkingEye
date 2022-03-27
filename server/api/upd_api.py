@@ -7,30 +7,32 @@ import torch
 import sys
 import os
 import copy
-current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
+from server.detection_module import DetectionModel
+from server.detection_module.detection_model import ParsedResult
+from server.detection_module.drawing import MyAnnotator
+import gc
 
-sys.path.append(parent)
-
-from detection_module import DetectionModel
-from detection_module.detection_model import ParsedResult
-from fastapi import FastAPI, Response
-
+from fastapi import FastAPI, Response, APIRouter
+gc.collect()
+torch.cuda.empty_cache()
 dm = DetectionModel(device='cpu')
 
-app = FastAPI()
+# app = FastAPI()
+router = APIRouter()
 
-@app.get("/", response_model=List[ParsedResult])
+
+@router.get("/", response_model=List[ParsedResult])
 def root():
     t = time.time()
     imgPath = os.path.dirname(os.path.realpath(__file__)) + '/cars_test.png'
     img = cv2.imread(imgPath)
     ret = dm.predict(img)
-    print(ret.object_prediction_list)
-    print(time.time() - t)
+    # print(ret.object_prediction_list)
+    # print(time.time() - t)
     return DetectionModel.parse_result(ret)
 
-@app.get(
+
+@router.get(
     "/user-images/",
     responses={
         200: {
@@ -55,3 +57,29 @@ def get_image_by_id(
         cv2.putText(img_cpy, name, (bbox[0] + 20, bbox[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     content = img_cpy.tobytes()
     return Response(encoded_img, media_type='image/jpeg')
+
+
+@router.get(
+    "/user-images-2/",
+    # responses={
+    #     200: {
+    #         "content": {"image": {}}
+    #     }
+    # },
+    # response_class=Response,
+    summary="Получить фото по id."
+)
+def get_image_by_id(
+):
+    imgPath = os.path.dirname(os.path.realpath(__file__)) + '/cars_test.png'
+    img = cv2.imread(imgPath)
+    ret = dm.predict(img)
+
+    parsed_result = DetectionModel.parse_result(ret)
+    img_cpy = copy.deepcopy(img)
+    MyAnnotator.draw_all_boxes(parsed_result, img_cpy)
+    MyAnnotator.draw_all_names(parsed_result, img_cpy)
+    cv2.imwrite('annotated.png', img_cpy)
+    content = img_cpy.tobytes()
+    return parsed_result
+    # return Response(encoded_img, media_type='image/jpeg')
