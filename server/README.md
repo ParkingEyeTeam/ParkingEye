@@ -1,5 +1,10 @@
 Для запуска сервера нужно будет установить c++ компилятор (https://www.microsoft.com/ru-ru/download/details.aspx?id=48159).
 
+Также еобходимо установить MongoDB Community Server 5.0.6+ (пакет msi) https://www.mongodb.com/try/download/community
+
+Запуск сервера MongoDB (по умолчанию в C:\Program Files\MongoDB\Server\*.*\bin) через cmd: 
+`mongod`
+
 Далее нужно скачать conda (https://www.anaconda.com/products/individual).
 
 Базовое окружение в **environment.yml**. Для установки в терминале ввести:
