@@ -27,7 +27,7 @@ def button_message(message):
 @bot.message_handler(content_types=['text','location'])
 def message_reply(message):
     if message.text=="Маршрут":
-        bot.send_photo(message.chat.id,)
+        bot.send_photo(message.chat.id, "Маршрут")
     if message.text=="Следующая":
         bot.send_message(message.chat.id,"Следующая")
     if message.text=="Предыдущая":
