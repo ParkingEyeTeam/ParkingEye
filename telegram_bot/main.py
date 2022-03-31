@@ -1,49 +1,40 @@
-import telebot
-import json
-import pprint
-import numpy as np
+import telebot;
+from telebot import types
 
-bot = telebot.TeleBot('5093740119:AAGiXZ4W5UIxWCA5_PociTPfh7FU7gepCUc')
+bot = telebot.TeleBot('********');
 
-
-@bot.message_handler(content_types=['text'])
-def get_start_messages(message):
-    if message.text == "/start":
-        bot.send_message(message.from_user.id,
-                         "Добро пожаловать!!!\nОтправь свою геолокацию боту, чтобы получить изображения ближайщих парковочных мест и их адрес")
-    elif message.text == "/help":
-        bot.send_message(message.from_user.id,
-                         "Отправь свою геолокацию боту, чтобы получить изображения ближайщих парковочных мест и их адрес")
-    else:
-        bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
+# @bot.message_handler(commands=['start'])
+# def start_message(message):
+#     bot.send_message(message.chat.id,'Привет')
+msg="Здраствуйте!!!\n" \
+    "Добро пожаловать в систему поиска ближайших свободных парковочных мест ParkingEye"
 
 
-@bot.message_handler(content_types=['location'])
-def get_location_message(message):
-    with open('src/info.json', 'r', encoding='utf-8') as f:
-        d = json.load(f)
-        x = message.location.latitude
-        # print(message.location.latitude)
-        y = message.location.longitude
-        # print(message.location.longitude)
-        point_1 = np.array((x, y))
-        min = 1000
-        id = 0
+@bot.message_handler(commands=['start'])
+def button_message(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True,selective=False)
+    item1 = types.KeyboardButton("Маршрут",request_location=True)
+    item2 = types.KeyboardButton("Следующая")
+    item3 = types.KeyboardButton("Предыдущая")
+    item4 = types.KeyboardButton("Обновить")
+    item5 = types.KeyboardButton("Справка")
+    markup.add(item1)
+    markup.row(item2, item3)
+    markup.row(item4)
+    markup.add(item5)
+    bot.send_message(message.chat.id,msg,reply_markup=markup)
 
-        for i in range(12):
-            x1 = (d['coord'][i]['position'][0])
-            y1 = (d['coord'][i]['position'][1])
-            point_2 = ((x1, y1))
-            distance = np.linalg.norm(point_1 - point_2)
-            # print(distance)
-            if distance < min and d['coord'][i]['cnt_empty'] >= 1:
-                min = distance
-                id = i
-        # print(id)
-    adress = d['coord'][id]['address']
-    img = open('src/' + (str)(d['coord'][id]['id']) + '.png', 'rb')
-    bot.send_photo(message.from_user.id, img)
-    bot.send_message(message.from_user.id, adress)
+@bot.message_handler(content_types=['text','location'])
+def message_reply(message):
+    if message.text=="Маршрут":
+        bot.send_photo(message.chat.id,)
+    if message.text=="Следующая":
+        bot.send_message(message.chat.id,"Следующая")
+    if message.text=="Предыдущая":
+        bot.send_message(message.chat.id,"Предыдущая")
+    if message.text=="Обновить":
+        bot.send_message(message.chat.id,"Обновить")
+    if message.text=="Справка":
+        bot.send_message(message.chat.id,"Справка")
 
-
-bot.polling(none_stop=True, interval=0)
+bot.infinity_polling()
