@@ -19,6 +19,7 @@ import io
 from starlette.responses import StreamingResponse
 
 from fastapi import FastAPI, Response, APIRouter
+
 gc.collect()
 torch.cuda.empty_cache()
 dm = DetectionModel(device='cpu')
@@ -28,15 +29,18 @@ router = APIRouter()
 
 PARKING_IMGS_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'parking_imgs')
 
+
 def get_parking_image_url(image_id):
     apiUrl = 'http://localhost:8000/images/'
     return apiUrl + str(image_id)
+
 
 class ParkingInfoResult(BaseModel):
     imgUrl: str
     address: str
     allParkingPlaces: int
     freeParkingPlaces: int
+
 
 # TODO add query params: skip and geoposition
 @router.get("/", response_model=ParkingInfoResult)
@@ -62,7 +66,7 @@ def root():
     path_to_save_img = os.path.join(PARKING_IMGS_PATH, mock_img_id + '.png')
 
     if not cv2.imwrite(path_to_save_img, img_cpy):
-         raise Exception("Could not write image")
+        raise Exception("Could not write image")
 
     return ParkingInfoResult(
         imgUrl=get_parking_image_url(mock_img_id),
@@ -94,7 +98,8 @@ def get_image_by_id(image_id: str):
     try:
         content = cv2.imencode('.png', img)[1].tobytes()
     except:
-        return Response(status_code=404, content=json.dumps({"description": "Not found"}), headers={"Content-Type": "application/json"})
+        return Response(status_code=404, content=json.dumps({"description": "Not found"}),
+                        headers={"Content-Type": "application/json"})
 
     return StreamingResponse(io.BytesIO(content), media_type='image/png')
 
