@@ -43,3 +43,10 @@ class MyAnnotator:
             # end = (res.bbox[2], res.bbox[3])
             if res.category_name in classes:
                 MyAnnotator.put_text(img, res.category_name, start)
+
+    @staticmethod
+    def put_circle(point, frame, empty=True):
+        if empty:
+            cv2.circle(frame, point, 5, (0, 255, 0), -1)
+        else:
+            cv2.circle(frame, point, 5, (0, 0, 255), -1)

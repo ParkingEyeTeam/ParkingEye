@@ -46,14 +46,15 @@ class DetectionModel:
             # print(res.score)
             # bbox = list(map(int, res.bbox.to_voc_bbox()))
             # print(bbox)
-            lst.append(
-                ParsedResult(
-                    bbox=list(map(int, res.bbox.to_voc_bbox())),
-                    # bbox=bbox,
-                    confidence=res.score.value,
-                    category_id=res.category.id,
-                    category_name=res.category.name)
-            )
+            if res.category.name in ['car']:
+                lst.append(
+                    ParsedResult(
+                        bbox=list(map(int, res.bbox.to_voc_bbox())),
+                        # bbox=bbox,
+                        confidence=res.score.value,
+                        category_id=res.category.id,
+                        category_name=res.category.name)
+                )
         return lst
 
 # dm = DetectionModel()
