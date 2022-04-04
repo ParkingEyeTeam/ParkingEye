@@ -14,8 +14,8 @@ async def read_all():
 
 
 @router.get('/parking/{camera_id}')
-async def read_one(camera_id):
-    return parking_repository.read_one(camera_id)
+async def read(camera_id):
+    return parking_repository.read(camera_id)
 
 
 @router.post('/parking')
@@ -31,3 +31,8 @@ async def update(camera_id, item: schemas.Parking):
 @router.delete('/parking/{camera_id}')
 async def delete(camera_id):
     return parking_repository.delete(camera_id)
+
+
+@router.delete('/parking/')
+async def delete_all():
+    return parking_repository.delete_all()

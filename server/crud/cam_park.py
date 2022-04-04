@@ -27,7 +27,7 @@ class CRUDCameraParking:
     def read_all(self):
         return items_entity(self.connection.local.camera_parking.find())
 
-    def read_one(self, camera_id):
+    def read(self, camera_id):
         return item_entity(self.connection.local.camera_parking.find_one({"camera_id": int(camera_id)}))
 
     def update(self, camera_id, item):
@@ -38,6 +38,10 @@ class CRUDCameraParking:
 
     def delete(self, camera_id):
         return item_entity(self.connection.local.camera_parking.find_one_and_delete({"camera_id": int(camera_id)}))
+
+    def delete_all(self):
+        self.connection.local.camera_parking.drop()
+        return "Collection camera_parking dropped!"
 
 
 camera_parking = CRUDCameraParking()
