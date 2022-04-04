@@ -18,31 +18,35 @@ def items_entity(items) -> list:
 class CRUDParking:
     string_connection = "mongodb://localhost:27017"
 
-    def __init__(self):
+    def __init__(self, db):
         self.connection = MongoClient(self.string_connection)
+        self.db = self.connection.get_database(db)
+
+    def __del__(self):
+        self.connection.close()
 
     def create(self, item):
-        self.connection.local.parking.insert_one(dict(item))
-        return items_entity(self.connection.local.parking.find())
+        self.db.parking.insert_one(dict(item))
+        return items_entity(self.db.parking.find())
 
     def read_all(self):
-        return items_entity(self.connection.local.parking.find())
+        return items_entity(self.db.parking.find())
 
     def read(self, camera_id):
-        return item_entity(self.connection.local.parking.find_one({"camera_id": int(camera_id)}))
+        return item_entity(self.db.parking.find_one({"camera_id": int(camera_id)}))
 
     def update(self, camera_id, item):
-        self.connection.local.parking.find_one_and_update({"camera_id": int(camera_id)}, {
+        self.db.parking.find_one_and_update({"camera_id": int(camera_id)}, {
             "$set": dict(item)
         })
-        return item_entity(self.connection.local.parking.find_one({"camera_id": int(camera_id)}))
+        return item_entity(self.db.parking.find_one({"camera_id": int(camera_id)}))
 
     def delete(self, camera_id):
-        return item_entity(self.connection.local.parking.find_one_and_delete({"camera_id": int(camera_id)}))
+        return item_entity(self.db.parking.find_one_and_delete({"camera_id": int(camera_id)}))
 
     def delete_all(self):
-        self.connection.local.parking.drop()
+        self.db.parking.drop()
         return "Collection parking dropped!"
 
 
-parking = CRUDParking()
+parking = CRUDParking("server_db")
