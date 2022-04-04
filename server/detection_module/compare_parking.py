@@ -16,11 +16,15 @@ def is_included(bbox, point):
 
 class CompareParking:
     @staticmethod
-    def compare(model: DetectionModel, image: np.ndarray, camera_parking: CameraParking):
+    def compare(model: DetectionModel, camera_parking: CameraParking):
         """
+        Выкидвывает ошибку ConnectionError, если не получилось взять кадр
         1, если i-й элемент занят
         0, если i-й элемент свободен
         """
+        ret, image = CompareParking.get_frame(camera_parking.camera_url)
+        if not ret:
+            raise ConnectionError
         preds = model.predict(image)
         parsed_res = DetectionModel.parse_result(preds)
         ret = []
@@ -32,3 +36,10 @@ class CompareParking:
                     break
             ret.append(f)
         return ret
+
+    @staticmethod
+    def get_frame(camera_url: str):
+        cap = cv2.VideoCapture(camera_url)
+        ret, frame = cap.read()
+        cap.release()
+        return ret, frame
