@@ -22,23 +22,24 @@ class Map:
             lat1, lng1 = point_a
             avg_lat, avg_lng = (lat1 + lat2) / 2, (lng1 + lng2) / 2
 
-        match site:
-            case 'yandex':
-                link += 'https://yandex.ru/maps/?ll='
-                link += f'{avg_lng}%2C{avg_lat}'
-                if point_a is None:
-                    link += f'&mode=routes&rtext=~{lat2}%2C{lng2}&rtt=auto&z=12'
-                else:
-                    link += f'&mode=routes&rtext={lat1}%2C{lng1}~{lat2}%2C{lng2}&rtt=auto&z=12'
-            case '2gis':
-                link += 'https://2gis.ru/directions/points/'
-                if point_a is None:
-                    link += f'%7C{lng2}%2C{lat2}'
-                else:
-                    link += f'{lng1}%2C{lat1}%7C{lng2}%2C{lat2}'
-                link += f'?m={avg_lng}%2C{avg_lat}'
-            case _:
-                raise ValueError(f'site=\'{site}\'')
+        if site == 'yandex':
+            link += 'https://yandex.ru/maps/?ll='
+            link += f'{avg_lng}%2C{avg_lat}'
+            if point_a is None:
+                link += f'&mode=routes&rtext=~{lat2}%2C{lng2}&rtt=auto&z=12'
+            else:
+                link += f'&mode=routes&rtext={lat1}%2C{lng1}~{lat2}%2C{lng2}&rtt=auto&z=12'
+
+        elif site == '2gis':
+            link += 'https://2gis.ru/directions/points/'
+            if point_a is None:
+                link += f'%7C{lng2}%2C{lat2}'
+            else:
+                link += f'{lng1}%2C{lat1}%7C{lng2}%2C{lat2}'
+            link += f'?m={avg_lng}%2C{avg_lat}'
+
+        else:
+            raise ValueError(f'site=\'{site}\'')
 
         return link
 
