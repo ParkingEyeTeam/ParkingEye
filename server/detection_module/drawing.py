@@ -45,8 +45,13 @@ class MyAnnotator:
                 MyAnnotator.put_text(img, res.category_name, start)
 
     @staticmethod
-    def put_circle(point, frame, empty=True):
-        if empty:
+    def put_circle(point, frame, empty=1):
+        if empty == 1:
             cv2.circle(frame, point, 5, (0, 255, 0), -1)
         else:
             cv2.circle(frame, point, 5, (0, 0, 255), -1)
+
+    @staticmethod
+    def put_all_circle(parking_places, frame, empty: list):
+        for point, empty_i in zip(parking_places, empty):
+            MyAnnotator.put_circle(point, frame, empty_i)
