@@ -19,8 +19,8 @@ class CompareParking:
     def compare(model: DetectionModel, camera_parking: CameraParking):
         """
         Выкидвывает ошибку ConnectionError, если не получилось взять кадр
-        1, если i-й элемент занят
-        0, если i-й элемент свободен
+        1, если i-я парковка в Camera_Parking.parking_places занята
+        0, если i-й парковка в Camera_Parking.parking_places свободна
         """
         ret, image = CompareParking.get_frame(camera_parking.camera_url)
         if not ret:
@@ -35,7 +35,7 @@ class CompareParking:
                     f = 1
                     break
             ret.append(f)
-        return ret
+        return ret, image
 
     @staticmethod
     def get_frame(camera_url: str):
