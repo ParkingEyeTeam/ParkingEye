@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  mongo_parking:
+    image: mongo
+    container_name: mongo_parking_eye
+    volumes:
+      - './entry_points/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js'
+    ports:
+      - "27017:27017"

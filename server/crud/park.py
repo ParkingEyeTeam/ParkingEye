@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 
+from server.crud import mongo_config
 
 def item_entity(item) -> dict:
     return {
@@ -16,7 +17,7 @@ def items_entity(items) -> list:
 
 
 class CRUDParking:
-    string_connection = "mongodb://localhost:27017"
+    string_connection = mongo_config.mongo_connection_string
 
     def __init__(self, db):
         self.connection = MongoClient(self.string_connection)
@@ -49,4 +50,4 @@ class CRUDParking:
         return "Collection parking dropped!"
 
 
-parking = CRUDParking("server_db")
+parking = CRUDParking(mongo_config.mongo_config['db'])

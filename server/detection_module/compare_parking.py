@@ -22,16 +22,16 @@ class CompareParking:
         1, если i-я парковка в Camera_Parking.parking_places занята
         0, если i-й парковка в Camera_Parking.parking_places свободна
         """
-        ret, image = CompareParking.get_frame(camera_parking.camera_url)
+        ret, image = CompareParking.get_frame(camera_parking['camera_url'])
         if not ret:
             raise ConnectionError
         preds = model.predict(image)
         parsed_res = DetectionModel.parse_result(preds)
         ret = []
-        for i in range(len(camera_parking.parking_places)):
+        for i in range(len(camera_parking['parking_places'])):
             f = 0
             for j in range(len(parsed_res)):
-                if is_included(parsed_res[j].bbox, camera_parking.parking_places[i]):
+                if is_included(parsed_res[j].bbox, camera_parking['parking_places'][i]):
                     f = 1
                     break
             ret.append(f)

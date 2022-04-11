@@ -47,11 +47,12 @@ class MyAnnotator:
     @staticmethod
     def put_circle(point, frame, empty=1):
         if empty == 1:
-            cv2.circle(frame, point, 5, (0, 255, 0), -1)
-        else:
             cv2.circle(frame, point, 5, (0, 0, 255), -1)
+        else:
+            cv2.circle(frame, point, 5, (0, 255, 0), -1)
 
     @staticmethod
     def put_all_circle(parking_places, frame, empty: list):
         for point, empty_i in zip(parking_places, empty):
-            MyAnnotator.put_circle(point, frame, empty_i)
+            correct_point = [int(point[0]), int(point[1])]
+            MyAnnotator.put_circle(correct_point, frame, empty_i)
