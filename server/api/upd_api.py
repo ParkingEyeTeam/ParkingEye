@@ -113,8 +113,10 @@ def root(last_camera_id: Optional[int] = None, longitude: float = None, latitude
     user_coords = (latitude, longitude)
 
     sorted_cameras = Map.sort_cameras(all_cameras, user_coords)
-
+    # print(get_available_cameras(sorted_cameras, last_camera_id))
+    # print(sorted_cameras)
     for camera in get_available_cameras(sorted_cameras, last_camera_id):
+
         places_info, img = compare_parking.CompareParking.compare(dm, camera)
         has_free_places = any(i == 0 for i in places_info)
 

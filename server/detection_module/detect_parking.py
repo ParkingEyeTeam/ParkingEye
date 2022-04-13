@@ -55,7 +55,7 @@ class ParkingPlacesFinder:
             cv2.waitKey(1)
 
         centers = self.tracker.drop_bad_tracks(min_frames=max_frames // 10)
-        pad = 20
+        pad = 10
         # print(centers)
         with_points = copy.deepcopy(first_img)
         for center in centers:
@@ -98,5 +98,5 @@ class ParkingPlacesFinder:
         # print(points)
         return points
 
-finder = ParkingPlacesFinder('C:\\Users\\igors\\Videos\\test_4.mp4')
+finder = ParkingPlacesFinder('C:\\Users\\igors\\Videos\\test_2.mp4')
 finder.main_loop()
