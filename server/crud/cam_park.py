@@ -2,10 +2,12 @@ from pymongo import MongoClient
 
 from server.crud import mongo_config
 
+
 def item_entity(item) -> dict:
     return {
         "camera_id": item["camera_id"],
         "camera_url": item["camera_url"],
+        "address": item["address"],
         "coords": item["coords"],
         "parking_places": item["parking_places"]
     }
