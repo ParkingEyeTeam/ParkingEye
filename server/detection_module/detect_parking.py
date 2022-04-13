@@ -19,7 +19,7 @@ class ParkingPlacesFinder:
 
     def main_loop(self):
         t = time.time()
-        cap = cv2.VideoCapture()
+        cap = cv2.VideoCapture(self.video_dir)
         cur = 0
         heatmap = None
         max_frames = 1000
@@ -70,7 +70,7 @@ class ParkingPlacesFinder:
         # print(np.max(heatmap))
         cluster_points = ParkingPlacesFinder.find_clusters(heatmap, thresh_por=max_frames // 10)
 
-        # print(cluster_points)
+        print(cluster_points)
         for point in cluster_points:
             MyAnnotator.put_circle(point, first_img)
         cv2.imwrite('with_points.png', first_img)
@@ -97,3 +97,6 @@ class ParkingPlacesFinder:
                 points.append((cX, cY))
         # print(points)
         return points
+
+finder = ParkingPlacesFinder('C:\\Users\\igors\\Videos\\test_4.mp4')
+finder.main_loop()

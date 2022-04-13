@@ -46,6 +46,15 @@ class MyAnnotator:
 
     @staticmethod
     def put_circle(point, frame, empty=1):
+        """
+        It draws a circle on the frame at the point specified
+
+        :param point: The center of the circle. The circle is centered at (x,y)
+        :param frame: The frame to draw the circle on
+        :param empty: 1 means the circle is filled with green color,
+        0 means the circle is empty with red color,
+        defaults to 1 (optional)
+        """
         if empty == 1:
             cv2.circle(frame, point, 5, (0, 0, 255), -1)
         else:
@@ -53,6 +62,15 @@ class MyAnnotator:
 
     @staticmethod
     def put_all_circle(parking_places, frame, empty: list):
+        """
+        > This function takes in a list of parking places, a frame, and a list of empty parking places. It then iterates
+        through the parking places and empty parking places and puts a circle on the frame at the parking place
+
+        :param parking_places: a list of points that represent the parking places
+        :param frame: the frame to be annotated
+        :param empty: list of booleans, where True means the parking place is empty
+        :type empty: list
+        """
         for point, empty_i in zip(parking_places, empty):
             correct_point = [int(point[0]), int(point[1])]
             MyAnnotator.put_circle(correct_point, frame, empty_i)
