@@ -6,4 +6,4 @@ services:
     volumes:
       - './entry_points/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js'
     ports:
-      - "27017:27017"
+      - "27020:27017"

@@ -1,6 +1,6 @@
 mongo_config = {
     'host': 'localhost',
-    'port': 27017,
+    'port': 27020,
     'db': 'parking_eye'
 }
 

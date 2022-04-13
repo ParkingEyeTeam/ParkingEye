@@ -18,7 +18,6 @@ from starlette.responses import StreamingResponse
 from server.detection_module import compare_parking
 from server.map import Map
 
-
 from fastapi import Response, APIRouter
 
 from server.schemas.cam_park import CameraParking
@@ -35,6 +34,7 @@ camera_parking_repository = crud.camera_parking
 
 PARKING_IMGS_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'parking_imgs')
 
+
 def get_parking_image_url(image_id):
     apiUrl = 'http://localhost:8000/images/'
     return apiUrl + str(image_id)
@@ -47,6 +47,7 @@ class ParkingInfoResult(BaseModel):
     freeParkingPlaces: int
     mapServiceLink: str
 
+
 def write_image_and_create_result(camera: CameraParking, places_info, img, user_coords):
     free_places = sum(i == 0 for i in places_info)
     all_places = sum(i >= 0 for i in places_info)
@@ -58,7 +59,8 @@ def write_image_and_create_result(camera: CameraParking, places_info, img, user_
     int_camera_id = int(camera['camera_id'])
 
     path_to_save_img = os.path.join(PARKING_IMGS_PATH, str(int_camera_id) + '.png')
-
+    if not os.path.exists(PARKING_IMGS_PATH):
+        os.mkdir(PARKING_IMGS_PATH)
     if not cv2.imwrite(path_to_save_img, img_cpy):
         raise Exception("Could not write image")
 
@@ -69,6 +71,7 @@ def write_image_and_create_result(camera: CameraParking, places_info, img, user_
         imgUrl=get_parking_image_url(int_camera_id),
         mapServiceLink=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis')
     )
+
 
 def get_available_cameras(sorted_cameras, last_camera_id):
     if last_camera_id is None: return sorted_cameras
@@ -83,7 +86,6 @@ def get_available_cameras(sorted_cameras, last_camera_id):
 
         if int(camera['camera_id']) == last_camera_id:
             can_use_camera = True
-
 
     return cameras_to_process
 
@@ -120,10 +122,10 @@ def root(last_camera_id: Optional[int] = None, longitude: float = None, latitude
             return write_image_and_create_result(camera, places_info, img, user_coords)
 
     return Response(
-            status_code=404,
-            content=json.dumps({"description": "No free parking places found"}),
-            media_type="application/json",
-        )
+        status_code=404,
+        content=json.dumps({"description": "No free parking places found"}),
+        media_type="application/json",
+    )
 
 
 @router.get(
@@ -152,4 +154,3 @@ def get_image_by_id(image_id: str):
                         headers={"Content-Type": "application/json"})
 
     return StreamingResponse(io.BytesIO(content), media_type='image/png')
-
