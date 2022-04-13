@@ -65,7 +65,7 @@ def write_image_and_create_result(camera: CameraParking, places_info, img, user_
         raise Exception("Could not write image")
 
     return ParkingInfoResult(
-        address='TODO_сделать_адреса',
+        address=camera['address'],
         freeParkingPlaces=free_places,
         allParkingPlaces=all_places,
         imgUrl=get_parking_image_url(int_camera_id),
