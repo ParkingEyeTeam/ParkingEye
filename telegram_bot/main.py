@@ -2,8 +2,13 @@ import requests
 import telebot
 import json
 from telebot import types
+import os
+from dotenv import load_dotenv
 
-bot = telebot.TeleBot('5093740119:AAHDk9msnQYxyv_ZrOqv76XpiWXXJ0NSb2A');
+load_dotenv()
+
+bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
+
 global cam_id
 
 
