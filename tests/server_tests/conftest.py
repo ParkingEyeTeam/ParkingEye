@@ -1,10 +1,11 @@
 import pytest
 from pymongo import MongoClient
 from server import schemas
+from server.crud import mongo_config
 
 """
 Сециальный файл pytest для фикстур.
-Чтобы использовать фикстуру в тесте, нужно передать имя 
+Чтобы использовать фикстуру в тесте, нужно передать имя
 метода фикстуры в качестве аргумента.
 """
 
@@ -12,7 +13,7 @@ from server import schemas
 @pytest.fixture()
 def cam_park_fixture():
     """Подключение к БД и ее заполнение тестовыми данными перед тестами"""
-    connection = MongoClient("mongodb://localhost:27017")
+    connection = MongoClient(mongo_config.mongo_connection_string)
     db = connection.get_database("test_server_db")
     db.drop_collection("camera_parking")
     items = [
