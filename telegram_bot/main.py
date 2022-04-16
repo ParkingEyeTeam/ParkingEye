@@ -3,11 +3,12 @@ import telebot
 import json
 from telebot import types
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
-bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
+bot = telebot.TeleBot('5093740119:AAFwhqB_TpBJNM0dE30KZI7Z4a22PREBESY')
+
 
 global cam_id
 
@@ -56,9 +57,9 @@ def button_message_2(message, res):
     markup.add(item5)
     r = requests.get(res.get("imgUrl"))
     cap = "Парковка по адресу " + "["+res.get("address")+"]("+res.get("mapServiceLink")+")"+"\n3,2 км\n"+\
-          "Свободно \- *"+str(res.get("allParkingPlaces"))+"*;"+\
+          "Свободно \- *"+str(res.get("freeParkingPlaces"))+"*;"+\
           "Занято \- *"+str(res.get("allParkingPlaces")-res.get("freeParkingPlaces"))+"*;"+\
-          "Всего \- *"+str(res.get("freeParkingPlaces"))+"*;"
+          "Всего \- *"+str(res.get("allParkingPlaces"))+"*;"
     # with open("image.png", 'rb') as f:
     bot.send_photo(message.chat.id, photo=r.content, caption=cap, reply_markup=markup, parse_mode='MarkdownV2')
     #bot.send_message(message.chat.id, msg, reply_markup=markup, disable_web_page_preview=True, parse_mode='MarkdownV2')
