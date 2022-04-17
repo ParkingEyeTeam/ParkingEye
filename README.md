@@ -13,7 +13,12 @@
 1. Копируется файл .env.sample в .env, в нем должны быть ОБЪЯВЛЕНЫ все нужные константы.
 2. В .env нужно ОПРЕДЕЛИТЬ нужные константы, .env лежит .gitignore, чтобы не светить константы.
 3. Для загрузке всех переменных в окружение: 
-```rom dotenv import load_dotenv
- load_dotenv()
+```python
+rom dotenv import load_dotenv
+load_dotenv()
 ```
- 4. Для доступа к переменной VARIABLE: `os.getenv('VARIABLE')` 
+ 4. Для доступа к переменной VARIABLE:
+ ```python
+os.getenv('VARIABLE')
+```
+ 
