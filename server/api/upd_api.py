@@ -4,7 +4,7 @@ from math import dist
 import cv2
 from matplotlib.style import use
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 import torch
 import os
 import pathlib
@@ -47,6 +47,7 @@ class ParkingInfoResult(BaseModel):
     freeParkingPlaces: int
     mapServiceLink: str
     id: int
+    coords: List[float]
 
 
 def write_image_and_create_result(camera: CameraParking, places_info, img, user_coords):
@@ -71,7 +72,8 @@ def write_image_and_create_result(camera: CameraParking, places_info, img, user_
         allParkingPlaces=all_places,
         imgUrl=get_parking_image_url(int_camera_id),
         mapServiceLink=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis'),
-        id=int(camera['camera_id'])
+        id=int(camera['camera_id']),
+        coords=list(user_coords)
     )
 
 
