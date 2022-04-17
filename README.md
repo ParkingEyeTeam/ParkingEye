@@ -14,5 +14,6 @@
 2. В .env нужно ОПРЕДЕЛИТЬ нужные константы, .env лежит .gitignore, чтобы не светить константы.
 3. Для загрузке всех переменных в окружение: 
 `rom dotenv import load_dotenv
+
  load_dotenv()`
  4. Для доступа к переменной VARIABLE: `os.getenv('VARIABLE')` 
