@@ -9,7 +9,7 @@ load_dotenv()
 
 bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
 
-with open("./src/log.json", 'rb') as f:
+with open("./src/log.json", 'r') as f:
     data = json.load(f)
 
 hello_msg = "Чтобы узнать как пользоваться системой нажмите кнопку 'Справка'"
@@ -19,6 +19,8 @@ help_msg = "Чтобы начать пользоваться чат ботом, 
 route_msg = "Сформированы ссылки на маршрут в некоторых картографических сервирсах.\n" \
             "Нажмите кнопку, чтобы перейти в нужный сервис."
 no_parking_place_msg ="Извините, но все остальные известные сервису парковки заняты!"
+
+print("Бот запущен")
 
 @bot.message_handler(commands=['start'])
 def button_message_1(message):
@@ -104,3 +106,5 @@ def next_message_reply(message):
         bot.send_message(message.chat.id, help_msg)
 
 bot.infinity_polling()
+with open("./src/log.json", 'w') as f:
+    json.dump(data, f)
