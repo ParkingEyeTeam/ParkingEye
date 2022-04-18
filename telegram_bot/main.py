@@ -9,8 +9,8 @@ import os
 
 bot = telebot.TeleBot('5093740119:AAFwhqB_TpBJNM0dE30KZI7Z4a22PREBESY')
 
-
-global cam_id
+with open("./src/log.json", 'rb') as f:
+    data = json.load(f)
 
 
 # @bot.message_handler(commands=['start'])
@@ -19,17 +19,17 @@ global cam_id
 hello_msg = "Чтобы узнать как пользоваться системой нажмите кнопку 'Справка'"
 help_msg = "Чтобы начать пользоваться чат ботом, отправьте геопозицию места назначения" \
            " с помощью кнопки 'Отправить геопозицию' или встроенной функцией Telegram. " \
-           "В результате будет подобрана ближайшая к этой геопозиции парковка.*******"
+           "В результате будет подобрана ближайшая к этой геопозиции парковка."
 route_msg = "Сформированы ссылки на маршрут в некоторых картографических сервирсах.\n" \
             "Нажмите кнопку, чтобы перейти в нужный сервис."
 @bot.message_handler(content_types=['location'])
 def get_loc(message):
     loc =message.location
     res = requests.get(url='http://localhost:8000/?longitude='+str(loc.longitude)+'&latitude='+str(loc.latitude))
-    print(loc.longitude)
-    print(loc.latitude)
-    res_d = res.json()
-    button_message_2(message, res_d)
+    longitude = loc.longitude
+    latitude = loc.latitude
+    data[message.chat.id] = res.json()
+    button_message_2(message)
 
 @bot.message_handler(commands=['start'])
 def button_message_1(message):
@@ -44,7 +44,7 @@ def button_message_1(message):
 
 #Разделить так как пересекается с маршрутом
 # @bot.message_handler(content_types=['location'])
-def button_message_2(message, res):
+def button_message_2(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True,selective=False)
     item1 = types.KeyboardButton("Маршрут")
     item2 = types.KeyboardButton("Обновить текущую")
@@ -55,11 +55,11 @@ def button_message_2(message, res):
     markup.row(item2, item3)
     markup.row(item4)
     markup.add(item5)
-    r = requests.get(res.get("imgUrl"))
-    cap = "Парковка по адресу " + "["+res.get("address")+"]("+res.get("mapServiceLink")+")"+"\n3,2 км\n"+\
-          "Свободно \- *"+str(res.get("freeParkingPlaces"))+"*;"+\
-          "Занято \- *"+str(res.get("allParkingPlaces")-res.get("freeParkingPlaces"))+"*;"+\
-          "Всего \- *"+str(res.get("allParkingPlaces"))+"*;"
+    r = requests.get(url=data[message.chat.id]["imgUrl"])
+    cap = "Парковка по адресу " + "["+data[message.chat.id]["address"]+"]("+data[message.chat.id]["mapServiceLink"]+")"+"\n"+\
+          "Свободно \- *"+str(data[message.chat.id]["freeParkingPlaces"])+"*;"+\
+          "Занято \- *"+str(data[message.chat.id]["allParkingPlaces"]-data[message.chat.id]["freeParkingPlaces"])+"*;"+\
+          "Всего \- *"+str(data[message.chat.id]["allParkingPlaces"])+"*;"
     # with open("image.png", 'rb') as f:
     bot.send_photo(message.chat.id, photo=r.content, caption=cap, reply_markup=markup, parse_mode='MarkdownV2')
     #bot.send_message(message.chat.id, msg, reply_markup=markup, disable_web_page_preview=True, parse_mode='MarkdownV2')
@@ -68,30 +68,33 @@ def button_message_2(message, res):
 @bot.message_handler(content_types=['text'])
 def next_message_reply(message):
     if message.text == "Следующая":
-        cap="Парковка по адресу "+"[Ленина 22](https://www.youtube.com/) "+"\n3,2 км\n"+"Свободно \- *4*;"+"Занято \- *3*;"+"Всего \- *7*;"
-        with open("./src/Logo.png", 'rb') as f:
-            bot.send_photo(message.chat.id, photo=f, caption=cap, parse_mode='MarkdownV2')
+        res = requests.get(url='http://localhost:8000/?last_camera_id='+str(data[message.chat.id]['id'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+        data[message.chat.id] = res.json()
+        r = requests.get(url=data[message.chat.id]["imgUrl"])
+        cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
+              "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
+        bot.send_photo(message.chat.id, photo=r.content, caption=cap, parse_mode='MarkdownV2')
+
     if message.text == "Обновить текущую":
-        cap = "Парковка по адресу " + "[Ленина 23](https://www.youtube.com/) "+"\n3,2 км\n"+"Свободно \- *4*;"+"Занято \- *3*;"+"Всего \- *7*;"
-        with open("./src/Logo.png", 'rb') as f:
-            bot.send_photo(message.chat.id, photo=f, caption=cap, parse_mode='MarkdownV2')
+        res = requests.get(url='http://localhost:8000/?longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+        data[message.chat.id] = res.json()
+        r = requests.get(url=data[message.chat.id]["imgUrl"])
+        cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
+              "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
+        bot.send_photo(message.chat.id, photo=r.content, caption=cap, parse_mode='MarkdownV2')
+
     if message.text == "Маршрут":
-        # links = get_file()
         inline_markup = types.InlineKeyboardMarkup()
-        item1 = types.InlineKeyboardButton(text="2GIS",url="https://2gis.ru/petrozavodsk")
-        item2 = types.InlineKeyboardButton(text="Яндекс Карты", url="https://yandex.ru/maps/18/petrozavodsk/?from=tabbar&ll=34.356647%2C61.785675&source=serp_navig&z=14")
+        item1 = types.InlineKeyboardButton(text="2GIS",url=data[message.chat.id]["mapServiceLink"])
+        #item2 = types.InlineKeyboardButton(text="Яндекс Карты", url="https://yandex.ru/maps/18/petrozavodsk/?from=tabbar&ll=34.356647%2C61.785675&source=serp_navig&z=14")
         inline_markup.add(item1)
-        inline_markup.add(item2)
+        #inline_markup.add(item2)
         bot.send_message(message.chat.id, route_msg, reply_markup=inline_markup)
     if message.text == "Справка":
         bot.send_message(message.chat.id, help_msg)
 
 bot.infinity_polling()
-
-def get_file():
-    file = requests.get(url="")
-    data = file.read()
-    return data
-
-def get_image():
-    img = requests.get(url="")
