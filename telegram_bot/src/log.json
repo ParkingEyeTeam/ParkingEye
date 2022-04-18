@@ -1,25 +1,27 @@
 {
-  "id_1":{
-  "imgUrl": "string",
-  "address": "string",
-  "allParkingPlaces": 0,
-  "freeParkingPlaces": 0,
-  "mapServiceLink": "string",
-  "id": 0,
-  "coords": [
-    0
-  ]
+    "id_1":{
+    "imgUrl": "string",
+    "address": "string",
+    "allParkingPlaces": 0,
+    "freeParkingPlaces": 0,
+    "mapServiceLink": "string",
+    "cameraId": 0,
+    "prevCameraId": 0,
+    "coords": [
+      0
+    ]
 },
-  "id_2": {
-  "imgUrl": "string",
-  "address": "string",
-  "allParkingPlaces": 0,
-  "freeParkingPlaces": 0,
-  "mapServiceLink": "string",
-  "id": 0,
-  "coords": [
-    700, 900
-  ]
+    "id_2": {
+    "imgUrl": "string",
+    "address": "string",
+    "allParkingPlaces": 0,
+    "freeParkingPlaces": 0,
+    "mapServiceLink": "string",
+    "cameraId": 0,
+    "prevCameraId": 0,
+    "coords": [
+      700, 900
+    ]
 }
 }
 
