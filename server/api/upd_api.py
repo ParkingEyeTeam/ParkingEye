@@ -47,7 +47,7 @@ class ParkingInfoResult(BaseModel):
     allParkingPlaces: int
     freeParkingPlaces: int
     mapServiceLink: str
-    id: int
+    cameraId: int
     prevCameraId: Union[int, None]
     coords: List[float]
 
@@ -74,7 +74,7 @@ def write_image_and_create_result(camera: CameraParking, places_info, img, user_
         allParkingPlaces=all_places,
         imgUrl=get_parking_image_url(int_camera_id),
         mapServiceLink=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis'),
-        id=int(camera['camera_id']),
+        cameraId=int(camera['camera_id']),
         coords=list(user_coords),
         prevCameraId=prev_camera_id
     )
