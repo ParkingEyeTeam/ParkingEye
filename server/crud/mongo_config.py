@@ -1,7 +1,11 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 mongo_config = {
-    'host': 'localhost',
-    'port': 27020,
+    'host': os.getenv('MONGO_HOST'),
     'db': 'parking_eye'
 }
 
-mongo_connection_string = f"mongodb://{mongo_config['host']}:{mongo_config['port']}"
+mongo_connection_string = f"mongodb://{mongo_config['host']}"
