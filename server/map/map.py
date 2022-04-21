@@ -100,7 +100,7 @@ class Map:
         return link
 
     @staticmethod
-    def get_point_point_distant(point_a, point_b, method='dijkstra'):
+    def get_point_point_distance(point_a, point_b, method='dijkstra'):
         """
         Вычисляет расстояние между двумя точками
         :param point_a: первая точка (lat, lng)
@@ -123,7 +123,7 @@ class Map:
         return distance
 
     @staticmethod
-    def get_camera_point_distant(camera, point, method='dijkstra'):
+    def get_camera_point_distance(camera, point, method='dijkstra'):
         """
         Вычисляет расстояние между камерой и точкой
         :param camera: камера
@@ -132,7 +132,7 @@ class Map:
         :return: расстояние между камерой и точкой
         """
         lat, lng = camera['coords']
-        return Map.get_point_point_distant((lat, lng), point, method)
+        return Map.get_point_point_distance((lat, lng), point, method)
 
     @staticmethod
     def __quicksort(cameras, point, fst, lst, method='dijkstra'):
@@ -150,12 +150,12 @@ class Map:
 
         i, j = fst, lst
         camera = cameras[random.randint(fst, lst)]
-        pivot = Map.get_camera_point_distant(camera, point, method)
+        pivot = Map.get_camera_point_distance(camera, point, method)
 
         while i <= j:
-            while Map.get_camera_point_distant(cameras[i], point, method) < pivot:
+            while Map.get_camera_point_distance(cameras[i], point, method) < pivot:
                 i += 1
-            while Map.get_camera_point_distant(cameras[j], point, method) > pivot:
+            while Map.get_camera_point_distance(cameras[j], point, method) > pivot:
                 j -= 1
             if i <= j:
                 cameras[i], cameras[j] = cameras[j], cameras[i]

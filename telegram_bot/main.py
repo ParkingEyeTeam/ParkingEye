@@ -9,41 +9,42 @@ load_dotenv()
 
 bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
 
-global cam_id
+API_URL = os.getenv('API_URL')
 
+with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'src', 'log.json'), 'rb') as f:
+    data = json.load(f)
 
-# @bot.message_handler(commands=['start'])
-# def start_message(message):
-#     bot.send_message(message.chat.id,'Привет')
 hello_msg = "Чтобы узнать как пользоваться системой нажмите кнопку 'Справка'"
 help_msg = "Чтобы начать пользоваться чат ботом, отправьте геопозицию места назначения" \
            " с помощью кнопки 'Отправить геопозицию' или встроенной функцией Telegram. " \
-           "В результате будет подобрана ближайшая к этой геопозиции парковка.*******"
+           "В результате будет подобрана ближайшая к этой геопозиции парковка."
 route_msg = "Сформированы ссылки на маршрут в некоторых картографических сервирсах.\n" \
             "Нажмите кнопку, чтобы перейти в нужный сервис."
-@bot.message_handler(content_types=['location'])
-def get_loc(message):
-    loc =message.location
-    res = requests.get(url='http://localhost:8000/?longitude='+str(loc.longitude)+'&latitude='+str(loc.latitude))
-    print(loc.longitude)
-    print(loc.latitude)
-    res_d = res.json()
-    button_message_2(message, res_d)
+no_parking_place_msg ="Извините, но все остальные известные сервису парковки заняты!"
+
+print("Бот запущен")
 
 @bot.message_handler(commands=['start'])
 def button_message_1(message):
+    print('Пользователь '+str(message.chat.id)+' запустил бота')
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True,selective=False)
     item4 = types.KeyboardButton("Отправить геопозицию", request_location=True)
     item5 = types.KeyboardButton("Справка")
     markup.row(item4)
     markup.add(item5)
-    sent = bot.send_message(message.chat.id, hello_msg, reply_markup=markup)
-    # bot.register_next_step_handler(sent, get_loc)
+    bot.send_message(message.chat.id, hello_msg, reply_markup=markup)
 
 
-#Разделить так как пересекается с маршрутом
-# @bot.message_handler(content_types=['location'])
-def button_message_2(message, res):
+@bot.message_handler(content_types=['location'])
+def get_loc(message):
+    print('Пользователь ' + str(message.chat.id) + ' отправил геопозицию')
+    loc =message.location
+    res = requests.get(url=API_URL + '/?longitude='+str(loc.longitude)+'&latitude='+str(loc.latitude))
+    data[message.chat.id] = res.json()
+    print(data[message.chat.id])
+    button_message_2(message)
+
+def button_message_2(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True,selective=False)
     item1 = types.KeyboardButton("Маршрут")
     item2 = types.KeyboardButton("Обновить текущую")
@@ -54,43 +55,58 @@ def button_message_2(message, res):
     markup.row(item2, item3)
     markup.row(item4)
     markup.add(item5)
-    r = requests.get(res.get("imgUrl"))
-    cap = "Парковка по адресу " + "["+res.get("address")+"]("+res.get("mapServiceLink")+")"+"\n3,2 км\n"+\
-          "Свободно \- *"+str(res.get("allParkingPlaces"))+"*;"+\
-          "Занято \- *"+str(res.get("allParkingPlaces")-res.get("freeParkingPlaces"))+"*;"+\
-          "Всего \- *"+str(res.get("freeParkingPlaces"))+"*;"
-    # with open("image.png", 'rb') as f:
+    r = requests.get(url=data[message.chat.id]["imgUrl"])
+    cap = "Парковка по адресу " + "["+data[message.chat.id]["address"]+"]("+data[message.chat.id]["mapServiceLink"]+")"+"\n"+\
+          "Свободно \- *"+str(data[message.chat.id]["freeParkingPlaces"])+"*;"+\
+          "Занято \- *"+str(data[message.chat.id]["allParkingPlaces"]-data[message.chat.id]["freeParkingPlaces"])+"*;"+\
+          "Всего \- *"+str(data[message.chat.id]["allParkingPlaces"])+"*;"
     bot.send_photo(message.chat.id, photo=r.content, caption=cap, reply_markup=markup, parse_mode='MarkdownV2')
-    #bot.send_message(message.chat.id, msg, reply_markup=markup, disable_web_page_preview=True, parse_mode='MarkdownV2')
+
 
 
 @bot.message_handler(content_types=['text'])
 def next_message_reply(message):
     if message.text == "Следующая":
-        cap="Парковка по адресу "+"[Ленина 22](https://www.youtube.com/) "+"\n3,2 км\n"+"Свободно \- *4*;"+"Занято \- *3*;"+"Всего \- *7*;"
-        with open("./src/Logo.png", 'rb') as f:
-            bot.send_photo(message.chat.id, photo=f, caption=cap, parse_mode='MarkdownV2')
+        print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Следующая"')
+        res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['cameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+        if res.status_code == 200:
+            print('Success!')
+            data[message.chat.id] = res.json()
+            print(data[message.chat.id])
+            r = requests.get(url=data[message.chat.id]["imgUrl"])
+            cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
+                  "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+                  "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+                  "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
+            bot.send_photo(message.chat.id, photo=r.content, caption=cap, parse_mode='MarkdownV2')
+        elif res.status_code == 404:
+            bot.send_message(message.chat.id, no_parking_place_msg)
+
     if message.text == "Обновить текущую":
-        cap = "Парковка по адресу " + "[Ленина 23](https://www.youtube.com/) "+"\n3,2 км\n"+"Свободно \- *4*;"+"Занято \- *3*;"+"Всего \- *7*;"
-        with open("./src/Logo.png", 'rb') as f:
-            bot.send_photo(message.chat.id, photo=f, caption=cap, parse_mode='MarkdownV2')
+        print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Обновить текущую"')
+        if data[message.chat.id]['prevCameraId'] != None:
+            res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['prevCameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+        else:
+            res = requests.get(url=API_URL + '/?longitude='+str(data[message.chat.id]['coords'][0])+'&latitude='+str(data[message.chat.id]['coords'][1]))
+        data[message.chat.id] = res.json()
+        print(data[message.chat.id])
+        r = requests.get(url=data[message.chat.id]["imgUrl"])
+        cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
+              "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
+        bot.send_photo(message.chat.id, photo=r.content, caption=cap, parse_mode='MarkdownV2')
+
     if message.text == "Маршрут":
-        # links = get_file()
+        print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Маршрут"')
         inline_markup = types.InlineKeyboardMarkup()
-        item1 = types.InlineKeyboardButton(text="2GIS",url="https://2gis.ru/petrozavodsk")
-        item2 = types.InlineKeyboardButton(text="Яндекс Карты", url="https://yandex.ru/maps/18/petrozavodsk/?from=tabbar&ll=34.356647%2C61.785675&source=serp_navig&z=14")
+        item1 = types.InlineKeyboardButton(text="2GIS",url=data[message.chat.id]["mapServiceLink"])
         inline_markup.add(item1)
-        inline_markup.add(item2)
         bot.send_message(message.chat.id, route_msg, reply_markup=inline_markup)
     if message.text == "Справка":
+        print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Справка"')
         bot.send_message(message.chat.id, help_msg)
 
 bot.infinity_polling()
-
-def get_file():
-    file = requests.get(url="")
-    data = file.read()
-    return data
-
-def get_image():
-    img = requests.get(url="")
+with open("./src/log.json", 'w') as f:
+    json.dump(data, f)
