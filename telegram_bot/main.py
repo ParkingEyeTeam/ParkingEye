@@ -71,7 +71,7 @@ def button_message_2(message):
 def next_message_reply(message):
     if message.text == "Следующая":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Следующая"')
-        res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['cameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+        res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['cameraId'])+'&longitude='+str(data[message.chat.id]['coords'][1]) + '&latitude='+str(data[message.chat.id]['coords'][0]))
         if res.status_code == 200:
             print('Success!')
             data[message.chat.id] = res.json()
@@ -89,9 +89,9 @@ def next_message_reply(message):
     if message.text == "Обновить текущую":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Обновить текущую"')
         if data[message.chat.id]['prevCameraId'] != None:
-            res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['prevCameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+            res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['prevCameraId'])+'&longitude='+str(data[message.chat.id]['coords'][1]) + '&latitude='+str(data[message.chat.id]['coords'][0]))
         else:
-            res = requests.get(url=API_URL + '/?longitude='+str(data[message.chat.id]['coords'][0])+'&latitude='+str(data[message.chat.id]['coords'][1]))
+            res = requests.get(url=API_URL + '/?longitude='+str(data[message.chat.id]['coords'][1])+'&latitude='+str(data[message.chat.id]['coords'][0]))
         data[message.chat.id] = res.json()
         print(data[message.chat.id])
         r = requests.get(url=data[message.chat.id]["imgUrl"])
