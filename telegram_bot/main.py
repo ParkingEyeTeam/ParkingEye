@@ -54,10 +54,13 @@ def button_message_2(message):
     markup.row(item4)
     markup.add(item5)
     r = requests.get(url=data[message.chat.id]["imgUrl"])
-    cap = "Парковка по адресу " + "["+data[message.chat.id]["address"]+"]("+data[message.chat.id]["mapServiceLink"]+")"+"\n"+\
-          "Свободно \- *"+str(data[message.chat.id]["freeParkingPlaces"])+"*;"+\
-          "Занято \- *"+str(data[message.chat.id]["allParkingPlaces"]-data[message.chat.id]["freeParkingPlaces"])+"*;"+\
-          "Всего \- *"+str(data[message.chat.id]["allParkingPlaces"])+"*;"
+    cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id][
+        "mapServiceLink"] + ")" + "\n" + \
+          "Расстояние \- *" + str(data[message.chat.id]["distance"]) + "* км;" + "\n" + \
+          "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+          "Занято \- *" + str(
+        data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+          "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
     bot.send_photo(message.chat.id, photo=r.content, caption=cap, reply_markup=markup, parse_mode='MarkdownV2')
 
 
@@ -73,6 +76,7 @@ def next_message_reply(message):
             print(data[message.chat.id])
             r = requests.get(url=data[message.chat.id]["imgUrl"])
             cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
+                  "Расстояние \- *" + str(data[message.chat.id]["distance"]) + "* км;" + "\n" + \
                   "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
                   "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
                   "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
@@ -89,9 +93,12 @@ def next_message_reply(message):
         data[message.chat.id] = res.json()
         print(data[message.chat.id])
         r = requests.get(url=data[message.chat.id]["imgUrl"])
-        cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
+        cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id][
+            "mapServiceLink"] + ")" + "\n" + \
+              "Расстояние \- *" + str(data[message.chat.id]["distance"]) + "* км;" + "\n" + \
               "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
-              "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
+              "Занято \- *" + str(
+            data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
               "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
         bot.send_photo(message.chat.id, photo=r.content, caption=cap, parse_mode='MarkdownV2')
 
