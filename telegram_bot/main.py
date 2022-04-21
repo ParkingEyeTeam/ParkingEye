@@ -57,8 +57,8 @@ def button_message_2(message):
     markup.add(item5)
     r = requests.get(url=data[message.chat.id]["imgUrl"])
     cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id][
-        "mapServiceLink"] + ")" + "\n" + \
-          "Расстояние \- *" + str(data[message.chat.id]["distance"]) + "* км;" + "\n" + \
+        "mapServiceLink2GIS"] + ")" + "\n" + \
+          "Расстояние \- *" + str(int(data[message.chat.id]["distance"]) / 1000).replace('.', '\.') + "* км;" + "\n" + \
           "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
           "Занято \- *" + str(
         data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
@@ -77,8 +77,8 @@ def next_message_reply(message):
             data[message.chat.id] = res.json()
             print(data[message.chat.id])
             r = requests.get(url=data[message.chat.id]["imgUrl"])
-            cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink"] + ")" + "\n" + \
-                  "Расстояние \- *" + str(data[message.chat.id]["distance"]) + "* км;" + "\n" + \
+            cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink2GIS"] + ")" + "\n" + \
+                  "Расстояние \- *" + str(int(data[message.chat.id]["distance"]) / 1000).replace('.', '\.') + "* км;" + "\n" + \
                   "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
                   "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
                   "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
@@ -96,8 +96,8 @@ def next_message_reply(message):
         print(data[message.chat.id])
         r = requests.get(url=data[message.chat.id]["imgUrl"])
         cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id][
-            "mapServiceLink"] + ")" + "\n" + \
-              "Расстояние \- *" + str(data[message.chat.id]["distance"]) + "* км;" + "\n" + \
+            "mapServiceLink2GIS"] + ")" + "\n" + \
+              "Расстояние \- *" + str(int(data[message.chat.id]["distance"]) / 1000).replace('.', '\.') + "* км;" + "\n" + \
               "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
               "Занято \- *" + str(
             data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
@@ -107,8 +107,10 @@ def next_message_reply(message):
     if message.text == "Маршрут":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Маршрут"')
         inline_markup = types.InlineKeyboardMarkup()
-        item1 = types.InlineKeyboardButton(text="2GIS",url=data[message.chat.id]["mapServiceLink"])
+        item1 = types.InlineKeyboardButton(text="2GIS",url=data[message.chat.id]["mapServiceLink2GIS"])
+        item2 = types.InlineKeyboardButton(text="Yandex",url=data[message.chat.id]["mapServiceLinkYandex"])
         inline_markup.add(item1)
+        inline_markup.add(item2)
         bot.send_message(message.chat.id, route_msg, reply_markup=inline_markup)
     if message.text == "Справка":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Справка"')

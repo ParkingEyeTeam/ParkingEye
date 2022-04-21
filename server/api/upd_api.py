@@ -1,3 +1,4 @@
+import time
 from typing import Union
 from http.client import responses
 import json
@@ -46,7 +47,9 @@ class ParkingInfoResult(BaseModel):
     address: str
     allParkingPlaces: int
     freeParkingPlaces: int
-    mapServiceLink: str
+    mapServiceLink2GIS: str
+    mapServiceLinkYandex: str
+    distance: int
     cameraId: int
     prevCameraId: Union[int, None]
     coords: List[float]
@@ -73,7 +76,9 @@ def write_image_and_create_result(camera: CameraParking, places_info, img, user_
         freeParkingPlaces=free_places,
         allParkingPlaces=all_places,
         imgUrl=get_parking_image_url(int_camera_id),
-        mapServiceLink=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis'),
+        mapServiceLink2GIS=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis'),
+        mapServiceLinkYandex=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), 'yandex'),
+        distance=int(Map.get_camera_point_distance(camera, user_coords)),
         cameraId=int(camera['camera_id']),
         coords=list(user_coords),
         prevCameraId=prev_camera_id
@@ -114,20 +119,37 @@ def root(last_camera_id: Optional[int] = None, longitude: float = None, latitude
             content=json.dumps({"desription": "longitude and latitude are required"}),
             media_type="application/json",
         )
+    startTime = time.time()
 
     all_cameras = camera_parking_repository.read_all()
 
+    endTime = time.time()
+
+    print("Read all cameras: " + str(endTime - startTime))
+
     user_coords = (latitude, longitude)
 
-    sorted_cameras = Map.sort_cameras(all_cameras, user_coords)
-    # print(get_available_cameras(sorted_cameras, last_camera_id))
-    # print(sorted_cameras)
+    startTime = time.time()
+
+    sorted_cameras = Map.sort_cameras(all_cameras, user_coords, method='euclid')
+
+    endTime = time.time()
+
+    print("Sort cameras: " + str(endTime - startTime))
+
+    startTime = time.time()
+
+    for camera in get_available_cameras(sorted_cameras, last_camera_id):
+        pass
+    print("Get available cameras: " + str(endTime - startTime))
+
     for camera in get_available_cameras(sorted_cameras, last_camera_id):
 
         places_info, img = compare_parking.CompareParking.compare(dm, camera)
         has_free_places = any(i == 0 for i in places_info)
 
         if has_free_places:
+            print("Found free parking places: " + str(time.time() - startTime))
             return write_image_and_create_result(camera, places_info, img, user_coords, last_camera_id)
 
     return Response(
