@@ -9,7 +9,9 @@ load_dotenv()
 
 bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
 
-with open("./src/log.json", 'r') as f:
+API_URL = os.getenv('API_URL')
+
+with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'src', 'log.json'), 'rb') as f:
     data = json.load(f)
 
 hello_msg = "Чтобы узнать как пользоваться системой нажмите кнопку 'Справка'"
@@ -37,7 +39,7 @@ def button_message_1(message):
 def get_loc(message):
     print('Пользователь ' + str(message.chat.id) + ' отправил геопозицию')
     loc =message.location
-    res = requests.get(url='http://localhost:8000/?longitude='+str(loc.longitude)+'&latitude='+str(loc.latitude))
+    res = requests.get(url=API_URL + '/?longitude='+str(loc.longitude)+'&latitude='+str(loc.latitude))
     data[message.chat.id] = res.json()
     print(data[message.chat.id])
     button_message_2(message)
@@ -69,7 +71,7 @@ def button_message_2(message):
 def next_message_reply(message):
     if message.text == "Следующая":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Следующая"')
-        res = requests.get(url='http://localhost:8000/?last_camera_id='+str(data[message.chat.id]['cameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+        res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['cameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
         if res.status_code == 200:
             print('Success!')
             data[message.chat.id] = res.json()
@@ -87,9 +89,9 @@ def next_message_reply(message):
     if message.text == "Обновить текущую":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Обновить текущую"')
         if data[message.chat.id]['prevCameraId'] != None:
-            res = requests.get(url='http://localhost:8000/?last_camera_id='+str(data[message.chat.id]['prevCameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
+            res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['prevCameraId'])+'&longitude='+str(data[message.chat.id]['coords'][0]) + '&latitude='+str(data[message.chat.id]['coords'][1]))
         else:
-            res = requests.get(url='http://localhost:8000/?longitude='+str(data[message.chat.id]['coords'][0])+'&latitude='+str(data[message.chat.id]['coords'][1]))
+            res = requests.get(url=API_URL + '/?longitude='+str(data[message.chat.id]['coords'][0])+'&latitude='+str(data[message.chat.id]['coords'][1]))
         data[message.chat.id] = res.json()
         print(data[message.chat.id])
         r = requests.get(url=data[message.chat.id]["imgUrl"])
