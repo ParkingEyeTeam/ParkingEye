@@ -19,6 +19,11 @@ def test_get_frame_ok(camera_url, address):
     assert ret is not None, f'Камера на {address} недоступна'
 
 
+def test_get_frame_bad():
+    ret, frame = CompareParking.get_frame('https://s1.moidom-stream.ru/s/public/random_number.m3u8')
+    assert ret is False, f'Неверный флага возврата неудачи'
+
+
 @pytest.mark.parametrize('places, empties',
                          [
                              ({'parking_places': [[100, 200], [310, 410]]}, [1, 1]),
