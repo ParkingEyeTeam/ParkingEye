@@ -39,7 +39,8 @@ def test_create(cam_park_fixture):
         camera_id=4,
         camera_url="https://s1.moidom-stream.ru/camera4",
         coords=[34, 45],
-        parking_places=[[329, 179]]
+        parking_places=[[329, 179]],
+        address="Проспект Карла Маркса, 19"
     )
     assert len(camera_parking.create(item)) == 4, "После создания элемента общее количество элементов коллекции не " \
                                                   "увеличилось! "
@@ -51,7 +52,8 @@ def test_update(cam_park_fixture):
         camera_id=2,
         camera_url="https://s1.moidom-stream.ru/camera2",
         coords=[56, 56],
-        parking_places=[[56, 56], [65, 65]]
+        parking_places=[[56, 56], [65, 65]],
+        address="Проспект Карла Маркса, 19"
     )
     new_returned_item = camera_parking.update(2, new_item)
     assert len(camera_parking.read_all()) == 3, "При обновлении элемента количество элементов коллекции изменилось!"

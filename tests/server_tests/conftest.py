@@ -21,19 +21,22 @@ def cam_park_fixture():
             camera_id=1,
             camera_url="https://s1.moidom-stream.ru/camera1",
             coords=[61, 34],
-            parking_places=[[329, 179], [308, 193], [924, 374]]
+            parking_places=[[329, 179], [308, 193], [924, 374]],
+            address="Проспект Карла Маркса, 19"
         ),
         schemas.CameraParking(
             camera_id=2,
             camera_url="https://s1.moidom-stream.ru/camera2",
             coords=[24, 67],
-            parking_places=[[123, 563], [238, 444]]
+            parking_places=[[123, 563], [238, 444]],
+            address="Проспект Карла Маркса, 19"
         ),
         schemas.CameraParking(
             camera_id=3,
             camera_url="https://s1.moidom-stream.ru/camera3",
             coords=[78, 11],
-            parking_places=[[463, 543], [568, 224], [183, 426], [134, 429]]
+            parking_places=[[463, 543], [568, 224], [183, 426], [134, 429]],
+            address="Проспект Карла Маркса, 19"
         ),
     ]
     for item in items:

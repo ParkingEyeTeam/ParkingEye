@@ -9,14 +9,14 @@ from server.detection_module import DetectionModel
 
 
 def is_included(bbox, point):
-    if bbox[0] < point[0] < bbox[2] and bbox[1] < point[1] < bbox[3]:
+    if bbox[0] <= point[0] <= bbox[2] and bbox[1] <= point[1] <= bbox[3]:
         return True
     return False
 
 
 class CompareParking:
     @staticmethod
-    def compare(model: DetectionModel, camera_parking: CameraParking):
+    def compare(model: DetectionModel, camera_parking):
         """
         Выкидвывает ошибку ConnectionError, если не получилось взять кадр
         1, если i-я парковка в Camera_Parking.parking_places занята
@@ -36,6 +36,13 @@ class CompareParking:
         print('predict:', time.time() - startTime)
 
         startTime = time.time()
+
+        ret = CompareParking.compare_places_with_bboxes(parsed_res, camera_parking)
+        print('parse_result:', time.time() - startTime)
+        return ret, image
+
+    @staticmethod
+    def compare_places_with_bboxes(parsed_res, camera_parking):
         ret = []
         for i in range(len(camera_parking['parking_places'])):
             f = 0
@@ -44,9 +51,7 @@ class CompareParking:
                     f = 1
                     break
             ret.append(f)
-
-        print('parse_result:', time.time() - startTime)
-        return ret, image
+        return ret
 
     @staticmethod
     def get_frame(camera_url: str):

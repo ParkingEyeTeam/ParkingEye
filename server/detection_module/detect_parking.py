@@ -11,7 +11,7 @@ from drawing import MyAnnotator
 
 class ParkingPlacesFinder:
     def __init__(self, video_dir='C:\\Users\\igors\\Videos\\test_3.mp4', inference_size=1920, frame_skip=5):
-        self.model = DetectionModel(inference_size=inference_size)
+        self.model = DetectionModel(inference_size=inference_size, confidence=0.05, det_type='sliced')
         self.tracker = Tracker()
         self.video_dir = video_dir
         self.max_frames = 1000
@@ -98,5 +98,5 @@ class ParkingPlacesFinder:
         # print(points)
         return points
 
-finder = ParkingPlacesFinder('C:\\Users\\igors\\Videos\\test_2.mp4')
+finder = ParkingPlacesFinder('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
 finder.main_loop()

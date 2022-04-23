@@ -1,7 +1,7 @@
 from cv2 import log
 import numpy as np
 from PIL import Image
-from sahi.predict import get_prediction
+from sahi.predict import get_prediction, get_sliced_prediction
 from typing import List
 from pydantic import BaseModel
 from sahi.prediction import PredictionResult
@@ -20,11 +20,11 @@ class ParsedResult(BaseModel):
 
 
 class DetectionModel:
-    def __init__(self, confidence=0.3, inference_size=1920, device='cuda:0'):
+    def __init__(self, confidence=0.3, inference_size=1920, device='cuda:0', det_type='usual'):
         yolov5_model_path = os.path.dirname(os.path.realpath(__file__)) + '/models/yolov5s6.pt'
         download_yolov5s6_model(destination_path=yolov5_model_path)
         # print(1)
-
+        self.det_type = det_type
         self.model = Yolov5DetectionModel(
             model_path=yolov5_model_path,
             confidence_threshold=confidence,
@@ -36,7 +36,17 @@ class DetectionModel:
 
     def predict(self, image: np.ndarray):
         image = Image.fromarray(image)
-        result = get_prediction(image, self.model, image_size=self.inference_size)
+        if self.det_type == 'sliced':
+            result = get_sliced_prediction(
+                image,
+                self.model,
+                slice_height=400,
+                slice_width=400,
+                overlap_height_ratio=0.2,
+                overlap_width_ratio=0.2
+            )
+        else:
+            result = get_prediction(image, self.model, image_size=self.inference_size)
         return result
 
     @staticmethod

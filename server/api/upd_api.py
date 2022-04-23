@@ -26,7 +26,7 @@ from server.schemas.cam_park import CameraParking
 
 gc.collect()
 torch.cuda.empty_cache()
-dm = DetectionModel(device='cpu')
+dm = DetectionModel(device='cpu', inference_size=1280, confidence=0.05)
 
 router = APIRouter()
 
