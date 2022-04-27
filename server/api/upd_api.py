@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 import torch
 import os
-import pathlib
 import copy
 from server import crud
 from server.detection_module import DetectionModel
@@ -32,10 +31,7 @@ router = APIRouter()
 
 Map.init()
 
-camera_parking_repository = crud.camera_parking
-
 PARKING_IMGS_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'parking_imgs')
-
 
 def get_parking_image_url(image_id):
     apiUrl = 'http://localhost:8000/images/'
@@ -116,12 +112,12 @@ def root(last_camera_id: Optional[int] = None, longitude: float = None, latitude
     if longitude is None or latitude is None:
         return Response(
             status_code=400,
-            content=json.dumps({"desription": "longitude and latitude are required"}),
+            content=json.dumps({"description": "longitude and latitude are required"}),
             media_type="application/json",
         )
     startTime = time.time()
 
-    all_cameras = camera_parking_repository.read_all()
+    all_cameras = crud.camera_parking.read_all()
 
     endTime = time.time()
 
