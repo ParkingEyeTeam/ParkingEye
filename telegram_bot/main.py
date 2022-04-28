@@ -21,6 +21,7 @@ help_msg = "Чтобы начать пользоваться чат ботом, 
 route_msg = "Сформированы ссылки на маршрут в некоторых картографических сервирсах.\n" \
             "Нажмите кнопку, чтобы перейти в нужный сервис."
 no_parking_place_msg ="Извините, но все остальные известные сервису парковки заняты!"
+error_msg = 'Введена неправильная команда. Чтобы узнать, как пользоваться ботом нажмите кнопку "Справка"!'
 
 print("Бот запущен")
 
@@ -86,7 +87,7 @@ def next_message_reply(message):
         elif res.status_code == 404:
             bot.send_message(message.chat.id, no_parking_place_msg)
 
-    if message.text == "Обновить текущую":
+    elif message.text == "Обновить текущую":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Обновить текущую"')
         if data[message.chat.id]['prevCameraId'] != None:
             res = requests.get(url=API_URL + '/?last_camera_id='+str(data[message.chat.id]['prevCameraId'])+'&longitude='+str(data[message.chat.id]['coords'][1]) + '&latitude='+str(data[message.chat.id]['coords'][0]))
@@ -104,7 +105,7 @@ def next_message_reply(message):
               "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
         bot.send_photo(message.chat.id, photo=r.content, caption=cap, parse_mode='MarkdownV2')
 
-    if message.text == "Маршрут":
+    elif message.text == "Маршрут":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Маршрут"')
         inline_markup = types.InlineKeyboardMarkup()
         item1 = types.InlineKeyboardButton(text="2GIS",url=data[message.chat.id]["mapServiceLink2GIS"])
@@ -112,9 +113,13 @@ def next_message_reply(message):
         inline_markup.add(item1)
         inline_markup.add(item2)
         bot.send_message(message.chat.id, route_msg, reply_markup=inline_markup)
-    if message.text == "Справка":
+
+    elif message.text == "Справка":
         print('Пользователь ' + str(message.chat.id) + ' нажал кнопку "Справка"')
         bot.send_message(message.chat.id, help_msg)
+    else:
+        bot.send_message(message.chat.id, error_msg)
+
 
 bot.infinity_polling()
 with open("./src/log.json", 'w') as f:
