@@ -58,7 +58,7 @@ def button_message_2(message):
     r = requests.get(url=data[message.chat.id]["imgUrl"])
     cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id][
         "mapServiceLink2GIS"] + ")" + "\n" + \
-          "Расстояние \- *" + str(int(data[message.chat.id]["distance"]) / 1000).replace('.', '\.') + "* км;" + "\n" + \
+          "Расстояние \- *" + str(round(int(data[message.chat.id]["distance"]) / 1000),1).replace('.', '\.') + "* км;" + "\n" + \
           "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
           "Занято \- *" + str(
         data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
@@ -78,7 +78,7 @@ def next_message_reply(message):
             print(data[message.chat.id])
             r = requests.get(url=data[message.chat.id]["imgUrl"])
             cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id]["mapServiceLink2GIS"] + ")" + "\n" + \
-                  "Расстояние \- *" + str(int(data[message.chat.id]["distance"]) / 1000).replace('.', '\.') + "* км;" + "\n" + \
+                  "Расстояние \- *" + str(round(int(data[message.chat.id]["distance"]) / 1000),1).replace('.', '\.') + "* км;" + "\n" + \
                   "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
                   "Занято \- *" + str(data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
                   "Всего \- *" + str(data[message.chat.id]["allParkingPlaces"]) + "*;"
@@ -97,7 +97,7 @@ def next_message_reply(message):
         r = requests.get(url=data[message.chat.id]["imgUrl"])
         cap = "Парковка по адресу " + "[" + data[message.chat.id]["address"] + "](" + data[message.chat.id][
             "mapServiceLink2GIS"] + ")" + "\n" + \
-              "Расстояние \- *" + str(int(data[message.chat.id]["distance"]) / 1000).replace('.', '\.') + "* км;" + "\n" + \
+              "Расстояние \- *" + str(round(int(data[message.chat.id]["distance"]) / 1000),1).replace('.', '\.') + "* км;" + "\n" + \
               "Свободно \- *" + str(data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
               "Занято \- *" + str(
             data[message.chat.id]["allParkingPlaces"] - data[message.chat.id]["freeParkingPlaces"]) + "*;" + \
