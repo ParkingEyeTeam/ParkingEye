@@ -27,4 +27,20 @@ class DetectionModelTest(unittest.TestCase):
 
         self.assertEqual(3, len(parsed), 'Неверное число автомобилей на картинке')
 
+    def test_cars_amount_from_camera(self):
+        img = cv2.imread(os.path.dirname(os.path.realpath(__file__)) + '/test_camera_cars.jpg')
+        t = time.time()
+        pred = self.model.predict(img)
+        max_inf = 2
+        parsed = DetectionModel.parse_result(pred)
 
+        self.assertEqual(3, len(parsed), 'Неверное число автомобилей на картинке')
+
+    def test_cars_amount_no_cars(self):
+        img = cv2.imread(os.path.dirname(os.path.realpath(__file__)) + '/no_cars.jpeg')
+        t = time.time()
+        pred = self.model.predict(img)
+        max_inf = 2
+        parsed = DetectionModel.parse_result(pred)
+
+        self.assertEqual(0, len(parsed), 'Неверное число автомобилей на картинке')

@@ -8,8 +8,8 @@ from server.schemas.cam_park import CameraParking
 from server.detection_module import DetectionModel
 
 
-def is_included(bbox, point):
-    if bbox[0] <= point[0] <= bbox[2] and bbox[1] <= point[1] <= bbox[3]:
+def is_included(bbox, point, pad=20):
+    if bbox[0] - pad <= point[0] <= bbox[2] + pad and bbox[1] - pad <= point[1] <= bbox[3] + pad:
         return True
     return False
 

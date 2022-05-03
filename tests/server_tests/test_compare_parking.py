@@ -28,7 +28,8 @@ def test_get_frame_bad():
                          [
                              ({'parking_places': [[100, 200], [310, 410]]}, [1, 1]),
                              ({'parking_places': [[1000, 1000], [310, 610]]}, [0, 1]),
-                             ({'parking_places': [[100, 200], [1000, 1000], [310, 410]]}, [1, 0, 1])
+                             ({'parking_places': [[100, 200], [1000, 1000], [310, 410]]}, [1, 0, 1]),
+                             ({'parking_places': []}, []),
                          ]
                          )
 def test_compare_places_with_bboxes(places, empties):
