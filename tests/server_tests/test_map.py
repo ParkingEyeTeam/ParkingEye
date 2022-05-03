@@ -18,7 +18,7 @@ class GenerateLinkTestCase(unittest.TestCase):
         self.assertRegex(link, '2gis.ru', 'При site="2gis" Ссылка должна вести на сайт 2gis.ru')
 
         with self.assertRaises(ValueError):
-            self.map.generate_route_link(self.point_a, self.point_b, 'my_site.ru')
+            self.map.generate_route_link(self.point_a, self.point_b, 'my_site')
 
     def test_correct_points(self):
         link = self.map.generate_route_link(self.point_a, self.point_b)
