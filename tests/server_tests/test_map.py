@@ -1,5 +1,4 @@
 import unittest
-import math
 from server import map
 
 
@@ -8,7 +7,6 @@ class GenerateLinkTestCase(unittest.TestCase):
         self.point_a = (61.81034, 34.32836)
         self.point_b = (61.76542, 34.3142)
         self.map = map.Map()
-        self.map.init()
 
     def test_correct_sites(self):
         link = self.map.generate_route_link(self.point_a, self.point_b, 'yandex')
@@ -18,7 +16,7 @@ class GenerateLinkTestCase(unittest.TestCase):
         self.assertRegex(link, '2gis.ru', 'При site="2gis" Ссылка должна вести на сайт 2gis.ru')
 
         with self.assertRaises(ValueError):
-            self.map.generate_route_link(self.point_a, self.point_b, 'my_site.ru')
+            self.map.generate_route_link(self.point_a, self.point_b, 'my_site')
 
     def test_correct_points(self):
         link = self.map.generate_route_link(self.point_a, self.point_b)
@@ -63,16 +61,16 @@ class DistanceTestCase(unittest.TestCase):
         self.map.init()
 
     def test_correct_methods(self):
-        distance_1 = self.map.get_camera_point_distance(self.camera, self.point_b, 'dijkstra')
-        distance_2 = self.map.get_point_point_distance(self.camera['coords'], self.point_b, 'dijkstra')
-        self.assertEqual(distance_1, distance_2, 'Расстояние находится неправильно методом Дийкстры')
+        methods = [
+            ['euclid', 'Расстояние находится неправильно методом Евклида'],
+            ['circle', 'Сферическое расстояние находится неправильно'],
+            ['dijkstra', 'Расстояние находится неправильно методом Дийкстры']
+        ]
 
-        distance_1 = self.map.get_camera_point_distance(self.camera, self.point_b, 'euclid')
-        distance_2 = self.map.get_point_point_distance(self.camera['coords'], self.point_b, 'euclid')
-        lat_dif, lng_dif = self.point_a[0] - self.point_b[0], self.point_a[1] - self.point_b[1]
-        distance_3 = math.sqrt(lat_dif * lat_dif + lng_dif * lng_dif)
-        self.assertEqual(distance_1, distance_2, 'Расстояние находится неправильно методом Евклида')
-        self.assertEqual(distance_1, distance_3, 'Расстояние находится неправильно методом Евклида')
+        for method, error_message in methods:
+            distance_1 = self.map.get_camera_point_distance(self.camera, self.point_b, method)
+            distance_2 = self.map.get_point_point_distance(self.camera['coords'], self.point_b, method)
+            self.assertEqual(distance_1, distance_2, error_message)
 
         with self.assertRaises(ValueError):
             self.map.get_camera_point_distance(self.camera, self.point_b, 'unknown_method')
@@ -91,23 +89,22 @@ class SortTestCase(unittest.TestCase):
         self.map.init()
 
     def test_correct_sort(self):
-        method = 'dijkstra'
-        sorted_cameras = self.map.sort_cameras(self.cameras, self.point, method)
-        prev_dist = self.map.get_camera_point_distance(sorted_cameras[0], self.point, method)
-        for camera in sorted_cameras[1:]:
-            dist = self.map.get_camera_point_distance(camera, self.point, method)
-            self.assertLessEqual(prev_dist, dist, 'Расстояние до следующей камеры должно быть >= чем расстояние до '
-                                                  'текущей камеры при методе Дийкстры')
-            prev_dist = dist
+        methods = [
+            ['euclid', 'Расстояние до следующей камеры должно быть >= чем расстояние до '
+                       'текущей камеры при методе Евклида'],
+            ['circle', 'Расстояние до следующей камеры должно быть >= чем расстояние до '
+                       'текущей камеры при сферическом методе'],
+            ['dijkstra', 'Расстояние до следующей камеры должно быть >= чем расстояние до '
+                         'текущей камеры при методе Дийкстры']
+        ]
 
-        method = 'euclid'
-        sorted_cameras = self.map.sort_cameras(self.cameras, self.point, method)
-        prev_dist = self.map.get_camera_point_distance(sorted_cameras[0], self.point, method)
-        for camera in sorted_cameras[1:]:
-            dist = self.map.get_camera_point_distance(camera, self.point, method)
-            self.assertLessEqual(prev_dist, dist, 'Расстояние до следующей камеры должно быть >= чем расстояние до '
-                                                  'текущей камеры при методе Евклида')
-            prev_dist = dist
+        for method, error_message in methods:
+            sorted_cameras = self.map.sort_cameras(self.cameras, self.point, method)
+            prev_dist = self.map.get_camera_point_distance(sorted_cameras[0], self.point, method)
+            for camera in sorted_cameras[1:]:
+                dist = self.map.get_camera_point_distance(camera, self.point, method)
+                self.assertLessEqual(prev_dist, dist, error_message)
+                prev_dist = dist
 
     def tearDown(self):
         pass

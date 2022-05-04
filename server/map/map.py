@@ -2,6 +2,7 @@ import math
 import random
 import osmnx as ox
 import networkx as nx
+from geopy.distance import great_circle
 
 
 class Map:
@@ -100,23 +101,57 @@ class Map:
         return link
 
     @staticmethod
+    def get_euclid_distance(point_a, point_b):
+        """
+        Вычисляет Евклидово расстояние между двумя точками
+        :param point_a: первая точка (lat, lng)
+        :param point_b: вторая точка (lat, lng)
+        :return: расстояние между точками
+        """
+        lat1, lng1 = point_a
+        lat2, lng2 = point_b
+        lat_dif, lng_dif = lat1 - lat2, lng1 - lng2
+        return math.sqrt(lat_dif * lat_dif + lng_dif * lng_dif)
+
+    @staticmethod
+    def get_circle_distance(point_a, point_b):
+        """
+        Вычисляет сферическое расстояние между двумя точками
+        :param point_a: первая точка (lat, lng)
+        :param point_b: вторая точка (lat, lng)
+        :return: расстояние между точками
+        """
+        return great_circle(point_a, point_b).m
+
+    @staticmethod
+    def get_dijkstra_distance(point_a, point_b):
+        """
+        Вычисляет расстояние между двумя точками на карте методом Дийкстры
+        :param point_a: первая точка (lat, lng)
+        :param point_b: вторая точка (lat, lng)
+        :return: расстояние между точками
+        """
+        lat1, lng1 = point_a
+        lat2, lng2 = point_b
+        source = ox.nearest_nodes(Map.__graph, lng1, lat1)
+        target = ox.nearest_nodes(Map.__graph, lng2, lat2)
+        return nx.shortest_path_length(Map.__graph, source, target, weight='length')
+
+    @staticmethod
     def get_point_point_distance(point_a, point_b, method='dijkstra'):
         """
         Вычисляет расстояние между двумя точками
         :param point_a: первая точка (lat, lng)
         :param point_b: вторая точка (lat, lng)
-        :param method: способ расчета расстояния ['dijkstra', 'euclid']
+        :param method: способ расчета расстояния ['dijkstra', 'euclid', 'circle']
         :return: расстояние между точками
         """
-        lat1, lng1 = point_a
-        lat2, lng2 = point_b
         if method == 'dijkstra':
-            source = ox.nearest_nodes(Map.__graph, lng1, lat1)
-            target = ox.nearest_nodes(Map.__graph, lng2, lat2)
-            distance = nx.shortest_path_length(Map.__graph, source, target, weight='length')
+            distance = Map.get_dijkstra_distance(point_a, point_b)
         elif method == 'euclid':
-            lat_dif, lng_dif = lat1 - lat2, lng1 - lng2
-            distance = math.sqrt(lat_dif * lat_dif + lng_dif * lng_dif)
+            distance = Map.get_euclid_distance(point_a, point_b)
+        elif method == 'circle':
+            distance = Map.get_circle_distance(point_a, point_b)
         else:
             raise ValueError(f'Unknown method={method}')
 
@@ -128,7 +163,7 @@ class Map:
         Вычисляет расстояние между камерой и точкой
         :param camera: камера
         :param point: точка (lat, lng)
-        :param method: способ расчета расстояния ['dijkstra', 'euclid']
+        :param method: способ расчета расстояния ['dijkstra', 'euclid', 'circle']
         :return: расстояние между камерой и точкой
         """
         lat, lng = camera['coords']
@@ -142,7 +177,7 @@ class Map:
         :param point: точка
         :param fst: начальный индекс сортировки
         :param lst: конечный индекс сортировки
-        :param method: способ расчета расстояния ['dijkstra', 'euclid']
+        :param method: способ расчета расстояния ['dijkstra', 'euclid', 'circle']
         :return: отсортированный лист камер
         """
         if fst >= lst:
@@ -171,7 +206,7 @@ class Map:
         список камер
         :param cameras: начальный список камер
         :param point: точка
-        :param method: способ расчета расстояния ['dijkstra', 'euclid']
+        :param method: способ расчета расстояния ['dijkstra', 'euclid', 'circle']
         :return: отсортированный лист камер
         """
         length = len(cameras)
@@ -186,7 +221,7 @@ class Map:
         Возвращает отсортированный по возрастанию расстояний до точки
         список фиксированных камер
         :param point: точка
-        :param method: способ расчета расстояния ['dijkstra', 'euclid']
+        :param method: способ расчета расстояния ['dijkstra', 'euclid', 'circle']
         :return: отсортированный лист камер
         """
         return Map.sort_cameras(Map.mock_cameras, point, method)
