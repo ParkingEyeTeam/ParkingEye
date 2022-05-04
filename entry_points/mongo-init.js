@@ -31,3 +31,29 @@ db.camera_parking.insertMany([
     },
 ]);
 
+db.createCollection("parking");
+
+db.parking.insertMany([
+    {
+        "camera_id": 20,
+        "timestamp": 20140812007401,
+        "image": "server/tests/server_tests/images/image20.png",
+        "empty_places": [[925, 375], [880, 380], [487, 383]],
+        "taken_places": [[531, 382], [634, 382], [354, 388], [259, 390], [305, 391], [400, 390]]
+    },
+    {
+        "camera_id": 6,
+        "timestamp": 20140812103842,
+        "image": "server/tests/server_tests/images/image6.png",
+        "empty_places": [[1851, 338], [1491, 391], [436, 429], [308, 458], [1806, 469], [146, 485], [1714, 497], [1647, 503]],
+        "taken_places": [[1585, 512]]
+    },
+    {
+        "camera_id": 5,
+        "timestamp": 20140812946134,
+        "image": "server/tests/server_tests/images/image5.png",
+        "empty_places": [[]],
+        "taken_places": [[790, 364], [781, 398], [749, 419], [672, 508], [645, 541], [611, 569], [572, 596], [542, 633], [508, 670], [471, 694]]
+    },
+]);
+
