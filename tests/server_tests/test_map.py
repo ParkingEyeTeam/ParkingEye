@@ -15,6 +15,7 @@ class GenerateLinkTestCase(unittest.TestCase):
         link = self.map.generate_route_link(self.point_a, self.point_b, '2gis')
         self.assertRegex(link, '2gis.ru', 'При site="2gis" Ссылка должна вести на сайт 2gis.ru')
 
+    def test_incorrect_site(self):
         with self.assertRaises(ValueError):
             self.map.generate_route_link(self.point_a, self.point_b, 'my_site')
 
@@ -72,6 +73,7 @@ class DistanceTestCase(unittest.TestCase):
             distance_2 = self.map.get_point_point_distance(self.camera['coords'], self.point_b, method)
             self.assertEqual(distance_1, distance_2, error_message)
 
+    def test_incorrect_method(self):
         with self.assertRaises(ValueError):
             self.map.get_camera_point_distance(self.camera, self.point_b, 'unknown_method')
         with self.assertRaises(ValueError):
@@ -105,6 +107,10 @@ class SortTestCase(unittest.TestCase):
                 dist = self.map.get_camera_point_distance(camera, self.point, method)
                 self.assertLessEqual(prev_dist, dist, error_message)
                 prev_dist = dist
+
+    def test_incorrect_sort(self):
+        with self.assertRaises(ValueError):
+            self.map.sort_cameras(self.cameras, self.point, 'unknown_method')
 
     def tearDown(self):
         pass
