@@ -23,7 +23,7 @@ class CompareParking:
         0, если i-й парковка в Camera_Parking.parking_places свободна
         """
         startTime = time.time()
-        ret, image = CompareParking.get_frame(camera_parking['camera_url'])
+        ret, image = FramesReader.get_frame(camera_parking['camera_url'])
         print('get_frame:', time.time() - startTime)
 
         if not ret:
@@ -53,6 +53,8 @@ class CompareParking:
             ret.append(f)
         return ret
 
+
+class FramesReader:
     @staticmethod
     def get_frame(camera_url: str):
         cap = cv2.VideoCapture(camera_url)

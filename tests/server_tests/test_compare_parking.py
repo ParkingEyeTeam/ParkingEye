@@ -1,5 +1,5 @@
 import unittest
-from server.detection_module.compare_parking import CompareParking
+from server.detection_module.compare_parking import CompareParking, FramesReader
 import numpy as np
 import cv2
 import time
@@ -15,12 +15,12 @@ from server.detection_module.detection_model import ParsedResult
                           ('https://s1.moidom-stream.ru/s/public/0000001415.m3u8', 'Набережная Варкауса, 21'),
                           ])
 def test_get_frame_ok(camera_url, address):
-    ret, frame = CompareParking.get_frame(camera_url)
+    ret, frame = FramesReader.get_frame(camera_url)
     assert ret is not None, f'Камера на {address} недоступна'
 
 
 def test_get_frame_bad():
-    ret, frame = CompareParking.get_frame('https://s1.moidom-stream.ru/s/public/random_number.m3u8')
+    ret, frame = FramesReader.get_frame('https://s1.moidom-stream.ru/s/public/random_number.m3u8')
     assert ret is False, f'Неверный флага возврата неудачи'
 
 
@@ -43,6 +43,6 @@ def test_compare_places_with_bboxes(places, empties):
 
 def test_time_to_get_frame():
     t = time.time()
-    ret, frame = CompareParking.get_frame('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
+    ret, frame = FramesReader.get_frame('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
     max_time = 0.5
     assert time.time() - t <= max_time, f'Время на получение кадра > {max_time} секунд'
