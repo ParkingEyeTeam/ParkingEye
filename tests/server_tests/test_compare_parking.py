@@ -3,7 +3,6 @@ from server.detection_module.compare_parking import CompareParking, FramesReader
 import numpy as np
 import cv2
 import time
-import os
 import pytest
 from server.detection_module.detection_model import ParsedResult
 
@@ -43,6 +42,6 @@ def test_compare_places_with_bboxes(places, empties):
 
 def test_time_to_get_frame():
     t = time.time()
-    ret, frame = FramesReader.get_frame('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
+    _ = FramesReader.get_frame('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
     max_time = 0.5
     assert time.time() - t <= max_time, f'Время на получение кадра > {max_time} секунд'
