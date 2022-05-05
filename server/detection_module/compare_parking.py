@@ -22,7 +22,7 @@ class CompareParking:
         1, если i-я парковка в Camera_Parking.parking_places занята
         0, если i-й парковка в Camera_Parking.parking_places свободна
         """
-        ret, image = CompareParking.get_frame(camera_parking['camera_url'])
+        ret, image = FramesReader.get_frame(camera_parking['camera_url'])
 
         if not ret:
             raise ConnectionError
