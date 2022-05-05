@@ -17,6 +17,7 @@ from server.map import Map
 from fastapi import Response, APIRouter
 
 PARKING_IMAGES_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'parking_imgs')
+MAP_METHOD = 'circle'
 
 gc.collect()
 torch.cuda.empty_cache()
@@ -43,6 +44,37 @@ def get_parking_image_url(image_id):
     return f'{api_url}{image_id}'
 
 
+def get_all_cameras():
+    return crud.camera_parking.read_all()
+
+
+def sort_cameras(cameras, point, method=MAP_METHOD):
+    return Map.sort_cameras(cameras, point, method)
+
+
+def get_available_cameras(sorted_cameras, last_camera_id):
+    if last_camera_id is None:
+        return sorted_cameras
+
+    length = len(sorted_cameras)
+    if last_camera_id == int(sorted_cameras[length-1]['camera_id']):
+        return []
+
+    for i in range(length):
+        if int(sorted_cameras[i]['camera_id']) == last_camera_id:
+            return sorted_cameras[i+1:]
+
+    return sorted_cameras
+
+
+def get_route_link(point_a, point_b, site):
+    return Map.generate_route_link(point_a, point_b, site)
+
+
+def get_distance(camera, point, method=MAP_METHOD):
+    return int(Map.get_camera_point_distance(camera, point, method))
+
+
 def write_image_and_create_result(camera, places_info, img, user_coords, prev_camera_id):
     free_places = sum(i == 0 for i in places_info)
     all_places = sum(i >= 0 for i in places_info)
@@ -64,36 +96,13 @@ def write_image_and_create_result(camera, places_info, img, user_coords, prev_ca
         freeParkingPlaces=free_places,
         allParkingPlaces=all_places,
         imgUrl=get_parking_image_url(int_camera_id),
-        mapServiceLink2GIS=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis'),
-        mapServiceLinkYandex=Map.generate_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), 'yandex'),
-        distance=int(Map.get_camera_point_distance(camera, user_coords)),
+        mapServiceLink2GIS=get_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), '2gis'),
+        mapServiceLinkYandex=get_route_link(user_coords, (camera['coords'][0], camera['coords'][1]), 'yandex'),
+        distance=get_distance(camera, user_coords),
         cameraId=int(camera['camera_id']),
         coords=list(user_coords),
         prevCameraId=prev_camera_id
     )
-
-
-def get_all_cameras():
-    return crud.camera_parking.read_all()
-
-
-def sort_cameras(cameras, point, method='circle'):
-    return Map.sort_cameras(cameras, point, method)
-
-
-def get_available_cameras(sorted_cameras, last_camera_id):
-    if last_camera_id is None:
-        return sorted_cameras
-
-    length = len(sorted_cameras)
-    if last_camera_id == int(sorted_cameras[length-1]['camera_id']):
-        return []
-
-    for i in range(length):
-        if int(sorted_cameras[i]['camera_id']) == last_camera_id:
-            return sorted_cameras[i+1:]
-
-    return sorted_cameras
 
 
 # Use http://localhost:8000/?longitude=34.354423&latitude=61.787439 for example
