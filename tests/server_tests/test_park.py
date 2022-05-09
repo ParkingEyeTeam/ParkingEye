@@ -1,13 +1,13 @@
 from server import crud, schemas
 
 
-def test_read_all(_):
+def test_read_all(park_fixture):
     parking = crud.park.CRUDParking("test_server_db")
     response_list = parking.read_all()
     assert len(response_list) == 3, "Количество элементов не соответствует ожидаемому числу!"
 
 
-def test_read(_):
+def test_read(park_fixture):
     parking = crud.park.CRUDParking("test_server_db")
     item = parking.read(20)
     assert item["camera_id"] == 20, "Поле не соответствует ожидаемому значению!"
@@ -18,7 +18,7 @@ def test_read(_):
         "Поле не соответствует ожидаемому значению!"
 
 
-def test_delete(_):
+def test_delete(park_fixture):
     item_it_to_delete = 20
     parking = crud.park.CRUDParking("test_server_db")
     deleted_item = parking.delete(item_it_to_delete)
@@ -29,14 +29,14 @@ def test_delete(_):
         assert item["camera_id"] != item_it_to_delete, "Присутствует имя удаленного элемента!"
 
 
-def test_delete_all(_):
+def test_delete_all(park_fixture):
     parking = crud.park.CRUDParking("test_server_db")
     assert parking.delete_all() == "Collection parking dropped!", "Возникли проблемы при удалении всех "\
                                                                   "элементов! "
     assert len(parking.read_all()) == 0, "Коллекция не пуста!"
 
 
-def test_create(_):
+def test_create(park_fixture):
     parking = crud.park.CRUDParking("test_server_db")
     item = schemas.Parking(
         camera_id=20,
@@ -49,7 +49,7 @@ def test_create(_):
                                            "увеличилось! "
 
 
-def test_update(_):
+def test_update(park_fixture):
     parking = crud.park.CRUDParking("test_server_db")
     new_item = schemas.Parking(
         camera_id=20,
