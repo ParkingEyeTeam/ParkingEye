@@ -16,13 +16,17 @@ def is_included(bbox, point, pad=20):
 
 class CompareParking:
     @staticmethod
+    def get_frame(url):
+        return FramesReader.get_frame(url)
+
+    @staticmethod
     def compare(model: DetectionModel, camera_parking):
         """
         Выкидвывает ошибку ConnectionError, если не получилось взять кадр
         1, если i-я парковка в Camera_Parking.parking_places занята
         0, если i-й парковка в Camera_Parking.parking_places свободна
         """
-        ret, image = FramesReader.get_frame(camera_parking['camera_url'])
+        ret, image = CompareParking.get_frame(camera_parking['camera_url'])
 
         if not ret:
             raise ConnectionError
