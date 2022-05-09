@@ -75,13 +75,16 @@ def get_distance(camera, point, method=MAP_METHOD):
     return int(Map.get_camera_point_distance(camera, point, method))
 
 
+def draw_circles(parking_places, image, places_info):
+    MyAnnotator.put_all_circle(parking_places, image, places_info)
+
+
 def write_image_and_create_result(camera, places_info, img, user_coords, prev_camera_id):
     free_places = sum(i == 0 for i in places_info)
     all_places = sum(i >= 0 for i in places_info)
 
     img_cpy = copy.deepcopy(img)
-
-    MyAnnotator.put_all_circle(camera['parking_places'], img_cpy, places_info)
+    draw_circles(camera['parking_places'], img_cpy, places_info)
 
     int_camera_id = int(camera['camera_id'])
 

@@ -20,6 +20,12 @@ class CompareParking:
         return FramesReader.get_frame(url)
 
     @staticmethod
+    def get_parsed_predict_result(model, image):
+        predict = model.predict(image)
+        parsed_result = DetectionModel.parse_result(predict)
+        return parsed_result
+
+    @staticmethod
     def compare(model: DetectionModel, camera_parking):
         """
         Выкидвывает ошибку ConnectionError, если не получилось взять кадр
@@ -31,8 +37,7 @@ class CompareParking:
         if not ret:
             raise ConnectionError
 
-        preds = model.predict(image)
-        parsed_res = DetectionModel.parse_result(preds)
+        parsed_res = CompareParking.get_parsed_predict_result(model, image)
 
         ret = CompareParking.compare_places_with_bboxes(parsed_res, camera_parking)
         return ret, image
