@@ -56,18 +56,12 @@ class ParkingPlacesFinder:
 
         centers = self.tracker.drop_bad_tracks(min_frames=max_frames // 10)
         pad = 10
-        # print(centers)
         with_points = copy.deepcopy(first_img)
         for center in centers:
             cnt, center_x, center_y = center
-            # center_x = int()
-            # print(center)
             heatmap[center_y - pad:center_y + pad, center_x - pad:center_x + pad] += cnt
             MyAnnotator.put_circle((center_x, center_y), with_points)
-        # print(centers)
 
-        # thresh = np.max(heatmap) * 4/5
-        # print(np.max(heatmap))
         cluster_points = ParkingPlacesFinder.find_clusters(heatmap, thresh_por=max_frames // 10)
 
         print(cluster_points)
@@ -81,13 +75,10 @@ class ParkingPlacesFinder:
         cur_mask = np.where(cur_heatmap > thresh_por, 1, 0).astype(np.uint8)
 
         n_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(cur_mask)
-        cur_points = []
         size_thresh = 1
-        appended = False
         points = []
         for j in range(1, n_labels):
             if stats[j, cv2.CC_STAT_AREA] >= size_thresh:
-                # print(stats[i, cv2.CC_STAT_AREA])
                 x = stats[j, cv2.CC_STAT_LEFT]
                 y = stats[j, cv2.CC_STAT_TOP]
                 w = stats[j, cv2.CC_STAT_WIDTH]
@@ -95,8 +86,8 @@ class ParkingPlacesFinder:
                 cX = int(x + w // 2)
                 cY = int(y + h // 2)
                 points.append((cX, cY))
-        # print(points)
         return points
+
 
 finder = ParkingPlacesFinder('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
 finder.main_loop()

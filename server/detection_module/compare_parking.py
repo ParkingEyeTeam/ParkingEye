@@ -1,10 +1,4 @@
-import copy
-import time
-
 import cv2
-import numpy as np
-
-from server.schemas.cam_park import CameraParking
 from server.detection_module import DetectionModel
 
 

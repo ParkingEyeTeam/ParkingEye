@@ -40,7 +40,6 @@ class MyAnnotator:
         """
         for res in results:
             start = (res.bbox[0] + 20, res.bbox[1])
-            # end = (res.bbox[2], res.bbox[3])
             if res.category_name in classes:
                 MyAnnotator.put_text(img, res.category_name, start)
 

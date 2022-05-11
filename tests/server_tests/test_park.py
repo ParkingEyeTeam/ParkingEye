@@ -9,7 +9,7 @@ def test_read_all(park_fixture):
 
 def test_read(park_fixture):
     parking = crud.park.CRUDParking("test_server_db")
-    item = parking.read(20)
+    item = parking.read('20')
     assert item["camera_id"] == 20, "Поле не соответствует ожидаемому значению!"
     assert item["timestamp"] == 20140812007401, "Поле не соответствует ожидаемому значению!"
     assert item["image"] == "server/tests/server_tests/images/image20.png", "Поле не соответствует ожидаемому значению!"

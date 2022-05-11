@@ -2,6 +2,7 @@ from pymongo import MongoClient
 
 from server.crud import mongo_config
 
+
 def item_entity(item) -> dict:
     return {
         "camera_id": item["camera_id"],

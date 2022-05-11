@@ -42,27 +42,19 @@ class Tracker:
 
         ret_centers = None
         for _id in self.tracked_objects.keys():
-            x_pos, y_pos = 0, 0
-            # for box in self.tracked_objects[_id]:
             if len(self.tracked_objects[_id]) < min_frames:
-                # print(1)
                 continue
             np_ar = np.array(self.tracked_objects[_id])
             centers = np.apply_along_axis(get_center, 1, np_ar)
             center_new = np.mean(centers, axis=0)
             min_point = np.min(centers, axis=0)
             max_point = np.max(centers, axis=0)
-            # mask = np.apply_along_axis(first_call(center_new, possible_dif / 2), 1, centers)
             if (center_new[0] - min_point[0]) ** 2 + (center_new[1] - min_point[1]) ** 2 <= \
                     (possible_dif / 2) ** 2 and \
                     (center_new[0] - max_point[0]) ** 2 + (center_new[1] - max_point[1]) ** 2 <= \
                     (possible_dif / 2) ** 2:
-                # print(_id)
                 if ret_centers is None:
-                    # ret_centers = np.array(centers)
                     ret_centers = [[len(centers), int(center_new[0]), int(center_new[1])]]
                 else:
-                    # ret_centers = np.concatenate((ret_centers, centers), axis=0)
                     ret_centers += [[len(centers), int(center_new[0]), int(center_new[1])]]
-        # print(_id)
         return ret_centers

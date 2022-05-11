@@ -1,13 +1,9 @@
-import unittest
 from server.detection_module.compare_parking import CompareParking, FramesReader
-import numpy as np
-import cv2
 import time
 import pytest
 from server.detection_module.detection_model import ParsedResult
 
 
-# class CompareParkingTest(unittest.TestCase):
 @pytest.mark.parametrize('camera_url, address',
                          [('https://s1.moidom-stream.ru/s/public/0000000088.m3u8', 'Проспект Карла Маркса, 19'),
                           ('https://s1.moidom-stream.ru/s/public/0000006567.m3u8', 'Краснофлотская, 20'),

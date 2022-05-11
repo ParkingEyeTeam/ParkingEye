@@ -99,3 +99,37 @@ def cam_park_fixture_empty():
 @pytest.fixture()
 def cam_park_fixture_for_api():
     cam_park_for_api()
+
+
+@pytest.fixture()
+def park_fixture():
+    """Подключение к БД и ее заполнение тестовыми данными перед тестами"""
+    connection = MongoClient(mongo_config.mongo_connection_string)
+    db = connection.get_database("test_server_db")
+    db.drop_collection("parking")
+    items = [
+        schemas.Parking(
+            camera_id=20,
+            timestamp=20140812007401,
+            image="server/tests/server_tests/images/image20.png",
+            empty_places=[[925, 375], [880, 380], [487, 383]],
+            taken_places=[[531, 382], [634, 382], [354, 388], [259, 390], [305, 391], [400, 390]],
+        ),
+        schemas.Parking(
+            camera_id=6,
+            timestamp=3213213213321,
+            image="server/tests/server_tests/images/image20.png",
+            empty_places=[[925, 375], [880, 380], [487, 383]],
+            taken_places=[[531, 382], [634, 382], [354, 388], [259, 390], [305, 391], [400, 390]],
+        ),
+        schemas.Parking(
+            camera_id=8,
+            timestamp=20140321327401,
+            image="server/tests/server_tests/images/image20.png",
+            empty_places=[[925, 375], [880, 380], [487, 383]],
+            taken_places=[[531, 382], [634, 382], [354, 388], [259, 390], [305, 391], [400, 390]],
+        ),
+    ]
+    for item in items:
+        db.parking.insert_one(dict(item))
+    connection.close()
