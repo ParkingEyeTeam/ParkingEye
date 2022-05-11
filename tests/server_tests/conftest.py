@@ -43,25 +43,7 @@ def cam_park():
     connection.close()
 
 
-def cam_park_empty():
-    connection = MongoClient(mongo_config.mongo_connection_string)
-    db = connection.get_database("test_server_db")
-    db.drop_collection("camera_parking")
-    connection.close()
-
-
-@pytest.fixture()
-def cam_park_fixture():
-    cam_park()
-
-
-@pytest.fixture()
-def cam_park_fixture_empty():
-    cam_park_empty()
-
-
-@pytest.fixture()
-def cam_park_fixture_for_api():
+def cam_park_for_api():
     """Подключение к БД и ее заполнение тестовыми данными перед тестами"""
     connection = MongoClient(mongo_config.mongo_connection_string)
     db = connection.get_database("test_server_db")
@@ -95,3 +77,25 @@ def cam_park_fixture_for_api():
     for item in items:
         db.camera_parking.insert_one(dict(item))
     connection.close()
+
+
+def cam_park_empty():
+    connection = MongoClient(mongo_config.mongo_connection_string)
+    db = connection.get_database("test_server_db")
+    db.drop_collection("camera_parking")
+    connection.close()
+
+
+@pytest.fixture()
+def cam_park_fixture():
+    cam_park()
+
+
+@pytest.fixture()
+def cam_park_fixture_empty():
+    cam_park_empty()
+
+
+@pytest.fixture()
+def cam_park_fixture_for_api():
+    cam_park_for_api()

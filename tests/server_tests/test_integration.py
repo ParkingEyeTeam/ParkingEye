@@ -7,17 +7,22 @@ import server.api.upd_api as controller
 from server.map import Map
 from server.detection_module.detection_model import DetectionModel
 from server.detection_module.compare_parking import CompareParking
+from tests.server_tests.conftest import cam_park
+from tests.server_tests.conftest import cam_park_for_api
+from tests.server_tests.conftest import cam_park_empty
 
 IMAGES_PATH = os.path.dirname(os.path.abspath(__file__)) + '\\images\\'
 
 
 class ControllerX1TestCase(unittest.TestCase):
-    def test_crud_empty(self, cam_park_fixture_empty):
+    def test_crud_empty(self):
+        cam_park_empty()
         cameras = controller.get_all_cameras()
         length = len(cameras)
         self.assertEqual(length, 0, f'Список камер должен быть пустым, а содержит {length} камер')
 
-    def test_crud_full(self, cam_park_fixture):
+    def test_crud_full(self):
+        cam_park()
         n = 3
         cameras = controller.get_all_cameras()
         length = len(cameras)
@@ -88,7 +93,7 @@ class X2TestCase(unittest.TestCase):
 
     def test_get_frame_correct(self):
         ret, frame = CompareParking.get_frame('https://s1.moidom-stream.ru/s/public/0000000088.m3u8')
-        self.assertFalse(ret, 'Результат должен быть True')
+        self.assertTrue(ret, 'Результат должен быть True')
         self.assertGreater(len(frame), 0, 'Массив пикселей не должен быть пустым')
 
     def test_predict_parks_incorrect(self):
@@ -105,7 +110,8 @@ class X2TestCase(unittest.TestCase):
 
 
 class X3TestCase(unittest.TestCase):
-    def test_read_and_sort(self, cam_park_fixture):
+    def test_read_and_sort(self):
+        cam_park()
         point = Map.mock_cameras[0]['coords']
         method = 'euclid'
         cameras = controller.get_all_cameras()
@@ -125,6 +131,7 @@ class X3TestCase(unittest.TestCase):
 
 
 class FullTestCase(unittest.TestCase):
-    def test_get_response(self, cam_park_fixture):
+    def test_get_response(self):
+        cam_park_for_api()
         response = controller.root(0, 34.38093, 61.78743)
-        self.assertEqual(200, response.status_code, 'Ожидался код ответа 200')
+        self.assertEqual(controller.ParkingInfoResult, type(response), 'Ожидался ответ от сервера')

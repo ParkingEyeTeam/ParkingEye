@@ -1,7 +1,6 @@
 import os
 import argparse
-os.environ["API_URL"] = "localhost:8000"
-os.environ["MONGO_HOST"] = "localhost:27020"
+os.environ["MONGO_DB"] = 'test_server_db'
 
 
 parser = argparse.ArgumentParser()
